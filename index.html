@@ -1,0 +1,3944 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Imprint hope</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <style>
+        :root {
+            /* Default values - these will be overridden by JS if custom settings exist */
+            --primary-dark: #002147; /* أزرق داكن جدًا */
+            --accent-red: #D45744;   /* أحمر صدئ/مرجاني */
+            --white: #FFFFFF;       /* أبيض */
+            --light-grey: #F5F7FA;   /* رمادي فاتق للخلفيات */
+            --medium-grey: #e0e0e0;  /* رمادي متوسط للحدود */
+            --text-dark: #333333;    /* لون النص الأساسي */
+            --text-light: #666666;   /* لون نص ثانوي */
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--light-grey);
+            color: var(--text-dark);
+            direction: rtl; /* للغة العربية */
+            text-align: right; /* محاذاة النص لليمين */
+        }
+
+        /* Login Page Styles */
+        .login-page {
+            display: flex; /* Starts visible, will be hidden by JS on login */
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: var(--primary-dark); /* Dark background for login */
+            position: fixed; /* Stay on top */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1000; /* Ensure it's on top */
+        }
+
+        .login-container {
+            background-color: var(--white);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .login-container h2 {
+            color: var(--primary-dark);
+            margin-bottom: 30px;
+            font-size: 28px;
+            border-bottom: 2px solid var(--accent-red);
+            padding-bottom: 10px;
+            display: inline-block;
+        }
+
+        .login-form .form-group {
+            margin-bottom: 20px;
+            text-align: right;
+        }
+
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .login-form input[type="email"],
+        .login-form input[type="password"] {
+            width: calc(100% - 20px);
+            padding: 12px 10px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 8px;
+            font-size: 16px;
+            color: var(--text-dark);
+            box-sizing: border-box;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .login-form input[type="email"]:focus,
+        .login-form input[type="password"]:focus {
+            border-color: var(--primary-dark);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0, 33, 71, 0.2);
+        }
+
+        .login-form button {
+            background-color: var(--accent-red);
+            color: var(--white);
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .login-form button:hover {
+            background-color: #B2463A;
+            transform: translateY(-2px);
+        }
+
+        .forgot-password {
+            margin-top: 15px;
+            font-size: 14px;
+        }
+
+        .forgot-password a {
+            color: var(--text-light);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password a:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        .login-error {
+            color: var(--accent-red);
+            margin-top: 10px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        /* General Dashboard Layout */
+        .dashboard-layout {
+            display: flex; /* This will be overridden by JS if not logged in */
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-dark);
+            color: var(--white);
+            padding: 20px;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .sidebar .logo h2 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--white);
+        }
+
+        .sidebar nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar nav ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 12px 15px;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar nav ul li a:hover,
+        .sidebar nav ul li a.active {
+            background-color: var(--accent-red);
+            color: var(--white);
+        }
+
+        /* Added for logout button to stick to bottom */
+        .sidebar-bottom-nav {
+            margin-top: auto; /* Pushes content above it to the top */
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .sidebar-bottom-nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar-bottom-nav ul li a {
+            color: var(--white);
+            text-decoration: none;
+            padding: 12px 15px;
+            display: block;
+            border-radius: 8px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-color: var(--accent-red); /* Highlight logout button */
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .sidebar-bottom-nav ul li a:hover {
+            background-color: #B2463A; /* Darker red on hover */
+        }
+
+
+        /* Main content area for all sections */
+        .main-content-wrapper {
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        /* Individual Content Sections */
+        .content-section {
+            display: none; /* Hidden by default, shown by JS based on navigation */
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px; /* Adjust as needed */
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-section h1, .content-section h2, .content-section h3 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-grey);
+            padding-bottom: 10px;
+        }
+
+        /* Section Actions (reusable for buttons) */
+        .section-actions {
+            display: flex;
+            justify-content: flex-end; /* Align to the right */
+            margin-bottom: 20px;
+        }
+
+        .section-actions button {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-left: 10px; /* Space between buttons if multiple */
+        }
+
+        .section-actions button:hover {
+            background-color: #003366; /* Darker primary */
+        }
+        .section-actions button.secondary-btn {
+            background-color: var(--accent-red);
+        }
+        .section-actions button.secondary-btn:hover {
+            background-color: #B2463A;
+        }
+
+
+        /* Dashboard Specific Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            color: var(--primary-dark);
+            margin: 0;
+        }
+
+        .header .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .user-profile span {
+            margin-left: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        /* Removed user profile image for clarity */
+        /*
+        .header .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--accent-red);
+        }
+        */
+
+        .kpi-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .kpi-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: 120px;
+        }
+
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .kpi-card .title {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .kpi-card .value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .kpi-card .change {
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+        }
+
+        .kpi-card .change.positive {
+            color: green;
+        }
+
+        .kpi-card .change.negative {
+            color: var(--accent-red);
+        }
+
+        .charts-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .chart-card h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-grey);
+            padding-bottom: 10px;
+        }
+
+        .recent-activity-section {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .recent-activity-section h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-grey);
+            padding-bottom: 10px;
+        }
+
+        .activity-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .activity-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid var(--light-grey);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-item .description {
+            flex-grow: 1;
+            font-size: 15px;
+        }
+
+        .activity-item .description span {
+            font-weight: 600;
+            color: var(--accent-red);
+        }
+
+        .activity-item .date {
+            font-size: 13px;
+            color: var(--text-light);
+            margin-right: 20px;
+        }
+
+        /* Project Management Specific Styles */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .project-card {
+            background-color: var(--light-grey); /* Lighter background for card */
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            position: relative; /* For action buttons positioning */
+        }
+
+        .project-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .project-card h4 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .project-card p {
+            font-size: 15px;
+            color: var(--text-light);
+            line-height: 1.6;
+            margin-bottom: 15px;
+            flex-grow: 1; /* Allow description to take available space */
+        }
+
+        .project-card .status {
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            align-self: flex-start; /* Aligns to start of card */
+            margin-bottom: 10px;
+        }
+
+        .project-card .status.in-progress {
+            background-color: #ffe0b2; /* Light orange */
+            color: #e65100; /* Dark orange */
+        }
+
+        .project-card .status.completed {
+            background-color: #e8f5e9; /* Light green */
+            color: #2e7d32; /* Dark green */
+        }
+
+        .project-card .status.on-hold {
+            background-color: #ffcdd2; /* Light red */
+            color: #c62828; /* Dark red */
+        }
+
+        .project-card .details {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-top: 15px; /* Add some space above details */
+            padding-top: 10px;
+            border-top: 1px solid var(--medium-grey);
+        }
+
+        .project-card .details span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .project-card .actions {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--medium-grey);
+            display: flex;
+            justify-content: flex-start; /* Align buttons to the right (due to RTL) */
+            gap: 10px;
+        }
+
+        .project-card .actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+
+        .project-card .actions .edit-btn {
+            background-color: #4CAF50; /* Green */
+            color: var(--white);
+        }
+
+        .project-card .actions .edit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .project-card .actions .delete-btn {
+            background-color: var(--accent-red); /* Red */
+            color: var(--white);
+        }
+
+        .project-card .actions .delete-btn:hover {
+            background-color: #cc4433;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 2000; /* Sit on top of everything */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+        }
+
+        .modal-content .close-button {
+            color: var(--text-light);
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 15px;
+            left: 15px; /* Adjust for RTL */
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-content .close-button:hover,
+        .modal-content .close-button:focus {
+            color: var(--accent-red);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-content h3 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid var(--medium-grey);
+            padding-bottom: 10px;
+            text-align: right;
+        }
+
+        .modal-content .form-group {
+            margin-bottom: 15px;
+            text-align: right;
+        }
+
+        .modal-content label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .modal-content input[type="text"],
+        .modal-content input[type="date"],
+        .modal-content input[type="number"],
+        .modal-content textarea,
+        .modal-content select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .modal-content input:focus,
+        .modal-content textarea:focus,
+        .modal-content select:focus {
+            border-color: var(--primary-dark);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 33, 71, 0.1);
+        }
+
+        .modal-content textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-start; /* For RTL */
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        .modal-buttons button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-buttons .submit-btn {
+            background-color: var(--primary-dark);
+            color: var(--white);
+        }
+
+        .modal-buttons .submit-btn:hover {
+            background-color: #003366;
+        }
+
+        .modal-buttons .cancel-btn {
+            background-color: var(--medium-grey);
+            color: var(--text-dark);
+        }
+
+        .modal-buttons .cancel-btn:hover {
+            background-color: #cccccc;
+        }
+
+        /* Clients & Suppliers Specific Styles */
+        .clients-suppliers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .entity-card {
+            background-color: var(--light-grey);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .entity-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .entity-card h4 {
+            color: var(--primary-dark);
+            margin-top: 0;
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .entity-card .type {
+            font-weight: 600;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 13px;
+            align-self: flex-start;
+            margin-bottom: 10px;
+            color: var(--white);
+        }
+
+        .entity-card .type.client {
+            background-color: #2e7d32; /* Dark green */
+        }
+
+        .entity-card .type.supplier {
+            background-color: #007bff; /* Blue */
+        }
+
+        .entity-card .details {
+            font-size: 14px;
+            color: var(--text-dark);
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--medium-grey);
+        }
+
+        .entity-card .details span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .entity-card .actions {
+            margin-top: 15px;
+            padding-top: 10px;
+            border-top: 1px solid var(--medium-grey);
+            display: flex;
+            justify-content: flex-start; /* For RTL */
+            gap: 10px;
+        }
+
+        .entity-card .actions button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .entity-card .actions .edit-btn {
+            background-color: #4CAF50; /* Green */
+            color: var(--white);
+        }
+        .entity-card .actions .edit-btn:hover {
+            background-color: #45a049;
+        }
+        .entity-card .actions .delete-btn {
+            background-color: var(--accent-red); /* Red */
+            color: var(--white);
+        }
+        .entity-card .actions .delete-btn:hover {
+            background-color: #cc4433;
+        }
+
+        /* Expenses & Income Specific Styles */
+        .transactions-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .summary-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .summary-card .label {
+            font-size: 16px;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .summary-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--primary-dark);
+        }
+
+        .summary-card.income .value {
+            color: #2e7d32; /* Green */
+        }
+
+        .summary-card.expense .value {
+            color: var(--accent-red); /* Red */
+        }
+
+        .summary-card.balance .value {
+            color: #007bff; /* Blue */
+        }
+
+
+        .transactions-table-container {
+            overflow-x: auto; /* For responsiveness on small screens */
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .transactions-table th, .transactions-table td {
+            border: 1px solid var(--medium-grey);
+            padding: 12px 15px;
+            text-align: right;
+            font-size: 15px;
+        }
+
+        .transactions-table th {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            font-weight: 600;
+            white-space: nowrap; /* Prevent wrapping in headers */
+        }
+
+        .transactions-table tbody tr:nth-child(even) {
+            background-color: var(--light-grey);
+        }
+
+        .transactions-table tbody tr:hover {
+            background-color: #e6e9ed; /* Slightly darker light grey on hover */
+        }
+
+        .transactions-table .amount.income {
+            color: #2e7d32; /* Green */
+            font-weight: 600;
+        }
+
+        .transactions-table .amount.expense {
+            color: var(--accent-red); /* Red */
+            font-weight: 600;
+        }
+
+        .transactions-table .actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 5px; /* Spacing between buttons */
+            transition: background-color 0.3s ease;
+        }
+
+        .transactions-table .actions button.delete-btn {
+            background-color: var(--accent-red);
+        }
+
+        .transactions-table .actions button:hover {
+            opacity: 0.9;
+        }
+
+        /* Financial Reports Specific Styles */
+        .financial-filters {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on small screens */
+            gap: 15px;
+            margin-bottom: 30px;
+            background-color: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            align-items: flex-end; /* Align items to the bottom */
+        }
+
+        .financial-filters .filter-group {
+            display: flex;
+            flex-direction: column; /* Stack label and input */
+            gap: 5px;
+            flex-grow: 1; /* Allow groups to grow */
+            min-width: 150px; /* Minimum width for inputs */
+        }
+        .financial-filters .filter-group.action-group {
+             flex-grow: 0; /* Don't let action group grow */
+             align-self: flex-end; /* Align button to the bottom */
+        }
+
+
+        .financial-filters label {
+            font-size: 14px;
+            color: var(--text-light);
+            font-weight: 600;
+        }
+
+        .financial-filters input[type="date"],
+        .financial-filters select {
+            padding: 8px 10px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            color: var(--text-dark);
+            background-color: var(--light-grey); /* Slightly different background for inputs */
+            box-sizing: border-box; /* Ensures padding doesn't add to width */
+        }
+        .financial-filters input[type="date"]:focus,
+        .financial-filters select:focus {
+            border-color: var(--primary-dark);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(0, 33, 71, 0.1);
+        }
+
+        .financial-filters button {
+            background-color: var(--accent-red);
+            color: var(--white);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            white-space: nowrap; /* Prevent text wrapping */
+        }
+
+        .financial-filters button:hover {
+            background-color: #B2463A;
+        }
+
+        .financial-charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 25px;
+        }
+
+        .financial-chart-card {
+            background-color: var(--white);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .financial-chart-card h3 {
+            margin-top: 0;
+            font-size: 20px;
+            color: var(--primary-dark);
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--medium-grey);
+            padding-bottom: 10px;
+        }
+
+        /* User Management Specific Styles */
+        .users-table-container {
+            overflow-x: auto;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .users-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .users-table th, .users-table td {
+            border: 1px solid var(--medium-grey);
+            padding: 12px 15px;
+            text-align: right;
+            font-size: 15px;
+        }
+
+        .users-table th {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .users-table tbody tr:nth-child(even) {
+            background-color: var(--light-grey);
+        }
+
+        .users-table tbody tr:hover {
+            background-color: #e6e9ed;
+        }
+
+        .users-table .actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .users-table .actions button.delete-btn {
+            background-color: var(--accent-red);
+        }
+
+        .users-table .actions button:hover {
+            opacity: 0.9;
+        }
+
+        /* Settings Page Styles */
+        .settings-form-container {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+        }
+
+        .settings-form-container .form-group {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--medium-grey);
+        }
+
+        .settings-form-container .form-group:last-of-type { /* Changed to last-of-type to include color groups */
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .settings-form-container label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 16px;
+        }
+
+        .settings-form-container input[type="text"],
+        .settings-form-container input[type="email"],
+        .settings-form-container select,
+        .settings-form-container input[type="color"],
+        .settings-form-container input[type="password"] { /* Added password input type */
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+            background-color: var(--light-grey);
+        }
+        /* Specific styling for color input to make it square/smaller if needed */
+        .settings-form-container input[type="color"] {
+            width: 50px; /* Make it a small square color picker */
+            height: 50px;
+            padding: 0;
+            border-radius: 5px;
+        }
+
+
+        .settings-form-container input:focus,
+        .settings-form-container select:focus,
+        .settings-form-container input[type="color"]:focus,
+        .settings-form-container input[type="password"]:focus { /* Added password focus style */
+            border-color: var(--accent-red);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(212, 87, 68, 0.1);
+        }
+
+        .settings-form-container .save-settings-btn,
+        .settings-form-container .reset-colors-btn,
+        .settings-form-container .update-credentials-btn { /* Combined update buttons */
+            background-color: var(--primary-dark);
+            color: var(--white);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 20px;
+            margin-left: 10px; /* Space between buttons */
+        }
+
+        .settings-form-container .save-settings-btn:hover {
+            background-color: #003366;
+        }
+        .settings-form-container .reset-colors-btn {
+            background-color: #666666; /* A neutral color for reset */
+        }
+        .settings-form-container .reset-colors-btn:hover {
+            background-color: #555555;
+        }
+        .settings-form-container .update-credentials-btn { /* Style for the new password button */
+            background-color: #4CAF50; /* Green for update */
+        }
+        .settings-form-container .update-credentials-btn:hover {
+            background-color: #45a049;
+        }
+        .credentials-update-message { /* Style for success/error messages */
+            margin-top: 15px;
+            font-weight: 600;
+            text-align: right;
+        }
+        .credentials-update-message.success {
+            color: #2e7d32; /* Green */
+        }
+        .credentials-update-message.error {
+            color: var(--accent-red); /* Red */
+        }
+
+
+        /* Material Management Specific Styles */
+        .materials-table-container {
+            overflow-x: auto;
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 20px;
+        }
+
+        .materials-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .materials-table th, .materials-table td {
+            border: 1px solid var(--medium-grey);
+            padding: 12px 15px;
+            text-align: right;
+            font-size: 15px;
+        }
+
+        .materials-table th {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .materials-table tbody tr:nth-child(even) {
+            background-color: var(--light-grey);
+        }
+
+        .materials-table tbody tr:hover {
+            background-color: #e6e9ed;
+        }
+
+        .materials-table .actions button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            margin-left: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .materials-table .actions button.delete-btn {
+            background-color: var(--accent-red);
+        }
+
+        .materials-table .actions button:hover {
+            opacity: 0.9;
+        }
+
+        /* Invoice Creation Specific Styles */
+        .invoice-form-container {
+            background-color: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            padding: 25px;
+        }
+
+        .invoice-form-container .form-group {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--medium-grey); /* Dashed for form groups */
+        }
+        .invoice-form-container .form-group:last-of-type { /* last form group before items */
+            border-bottom: none;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .invoice-form-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary-dark);
+            font-size: 15px;
+        }
+
+        .invoice-form-container input[type="text"],
+        .invoice-form-container input[type="date"],
+        .invoice-form-container input[type="number"],
+        .invoice-form-container select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            border: 1px solid var(--medium-grey);
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Cairo', sans-serif;
+            box-sizing: border-box;
+            background-color: var(--light-grey);
+        }
+        .invoice-form-container input:focus,
+        .invoice-form-container select:focus {
+            border-color: var(--accent-red);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(212, 87, 68, 0.1);
+        }
+
+        .invoice-items-header {
+            margin-top: 30px;
+            margin-bottom: 15px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            font-size: 18px;
+            border-bottom: 1px solid var(--medium-grey);
+            padding-bottom: 10px;
+        }
+
+        .invoice-item-row {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 0.5fr; /* Material, Qty, Unit Price, Total, Actions */
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed var(--light-grey);
+        }
+        .invoice-item-row:last-of-type {
+             border-bottom: none;
+             margin-bottom: 0;
+             padding-bottom: 0;
+        }
+
+        .invoice-item-row .item-action-btn {
+            background-color: var(--accent-red);
+            color: var(--white);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+            white-space: nowrap;
+        }
+        .invoice-item-row .item-action-btn:hover {
+            background-color: #B2463A;
+        }
+        .invoice-item-row .item-action-btn.add-item {
+            background-color: #2e7d32; /* Green */
+        }
+        .invoice-item-row .item-action-btn.add-item:hover {
+            background-color: #266b2a;
+        }
+
+        .invoice-total {
+            text-align: left; /* Align total to left for RTL */
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--primary-dark);
+        }
+
+        .invoice-total span {
+            color: var(--accent-red);
+            margin-left: 10px;
+        }
+
+        .invoice-submit-btn {
+            background-color: var(--primary-dark);
+            color: var(--white);
+            border: none;
+            padding: 14px 25px;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .invoice-submit-btn:hover {
+            background-color: #003366;
+        }
+
+        /* Styles for the invoice content inside PDF */
+        /* These styles are specifically for the content that will be converted to PDF */
+        #invoicePdfContent {
+            font-family: 'Cairo', sans-serif;
+            direction: rtl;
+            text-align: right;
+            padding: 20px;
+            background-color: #ffffff;
+            color: #333333;
+            width: 700px; /* A fixed width for PDF content */
+            box-sizing: border-box; /* Include padding in width */
+        }
+        #invoicePdfContent h2 {
+            text-align: center;
+            color: #002147;
+            border-bottom: 2px solid #D45744;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        #invoicePdfContent .invoice-header-info,
+        #invoicePdfContent .invoice-details-table,
+        #invoicePdfContent .invoice-items-table {
+            width: 100%;
+            margin-bottom: 20px;
+            border-collapse: collapse;
+        }
+        #invoicePdfContent .invoice-header-info td {
+            padding: 5px 0;
+        }
+        #invoicePdfContent .invoice-header-info strong {
+            color: #002147;
+            margin-left: 5px;
+        }
+        #invoicePdfContent .invoice-details-table th,
+        #invoicePdfContent .invoice-items-table th,
+        #invoicePdfContent .invoice-items-table td {
+            border: 1px solid #e0e0e0;
+            padding: 8px;
+            text-align: right;
+        }
+        #invoicePdfContent .invoice-details-table th,
+        #invoicePdfContent .invoice-items-table th {
+            background-color: #f5f7fa;
+            color: #333333;
+            font-weight: 600;
+        }
+        #invoicePdfContent .invoice-total-pdf {
+            text-align: left;
+            font-size: 18px;
+            font-weight: 700;
+            color: #002147;
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #002147;
+        }
+        #invoicePdfContent .invoice-total-pdf span {
+            color: #D45744;
+            margin-left: 10px;
+        }
+        #invoicePdfContent .invoice-footer {
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loginPage" class="login-page">
+        <div class="login-container">
+            <h2>تسجيل الدخول</h2>
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="email">البريد الإلكتروني:</label>
+                    <input type="email" id="email" name="email" required placeholder="أدخل بريدك الإلكتروني">
+                </div>
+                <div class="form-group">
+                    <label for="password">كلمة المرور:</label>
+                    <input type="password" id="password" name="password" required placeholder="أدخل كلمة المرور">
+                </div>
+                <button type="submit">تسجيل الدخول</button>
+                <div id="loginError" class="login-error" style="display: none;">
+                    البريد الإلكتروني أو كلمة المرور غير صحيحة.
+                </div>
+            </form>
+            <div class="forgot-password">
+                <a href="#">هل نسيت كلمة المرور؟</a>
+            </div>
+        </div>
+    </div>
+
+    <div id="dashboardLayout" class="dashboard-layout">
+        <aside class="sidebar">
+            <div class="logo">
+                <h2>شركة رواد التكامل المتحدة للمقاولات العامة</h2>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="#" data-section="dashboard" class="active">لوحة التحكم</a></li>
+                    <li><a href="#" data-section="projects">إدارة المشاريع</a></li>
+                    <li><a href="#" data-section="clients-suppliers">العملاء والموردون</a></li>
+                    <li><a href="#" data-section="materials">إدارة المواد</a></li>
+                    <li><a href="#" data-section="create-invoice">إصدار فاتورة</a></li>
+                    <li><a href="#" data-section="expenses-income">المصروفات والإيرادات</a></li>
+                    <li><a href="#" data-section="financial-reports">التقارير المالية</a></li>
+                    <li><a href="#" data-section="user-management">إدارة المستخدمين</a></li>
+                    <li><a href="#" data-section="settings">الإعدادات</a></li>
+                </ul>
+            </nav>
+            <div class="sidebar-bottom-nav">
+                <ul>
+                    <li><a href="#" id="logoutButton">تسجيل الخروج</a></li>
+                </ul>
+            </div>
+        </aside>
+
+        <main class="main-content-wrapper">
+            <section id="dashboard" class="content-section active">
+                <header class="header">
+                    <h1>مرحباً بك في لوحة التحكم، <span id="dashboardUserNameDisplay">رواد التكامل المتحدة للمقاولات العامة</span>!</h1>
+                    <div class="user-profile">
+                        <span>مدير الحسابات</span>
+                        </div>
+                </header>
+
+                <section class="kpi-cards">
+                    <div class="kpi-card">
+                        <div class="title">إجمالي الإيرادات (الشهر الحالي)</div>
+                        <div class="value" id="dashboardTotalIncome">0 رس</div>
+                        <div class="change positive" id="dashboardIncomeChange">
+                            </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="title">إجمالي المصروفات (الشهر الحالي)</div>
+                        <div class="value" id="dashboardTotalExpenses">0 رس</div>
+                        <div class="change negative" id="dashboardExpensesChange">
+                            </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="title">صافي الربح المتوقع (المشاريع النشطة)</div>
+                        <div class="value" id="dashboardNetProfit">0 رس</div>
+                        <div class="change positive" id="dashboardProfitChange">
+                            </div>
+                    </div>
+                    <div class="kpi-card">
+                        <div class="title">الفواتير المستحقة (للشركة)</div>
+                        <div class="value">85,000 رس</div>
+                        <div class="change negative">
+                            3 فواتير متأخرة
+                        </div>
+                    </div>
+                </section>
+
+                <section class="charts-section">
+                    <div class="chart-card">
+                        <h3>الإيرادات مقابل المصروفات (آخر 6 أشهر)</h3>
+                        <canvas id="revenueExpensesChart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>توزيع المصروفات حسب الفئة (الشهر الحالي)</h3>
+                        <canvas id="expensesByCategoryChart"></canvas>
+                    </div>
+                </section>
+
+                <section class="recent-activity-section">
+                    <h3>النشاطات الأخيرة</h3>
+                    <ul class="activity-list" id="dashboardActivityList">
+                        </ul>
+                </section>
+            </section>
+
+            <section id="projects" class="content-section">
+                <header class="header">
+                    <h1>إدارة المشاريع</h1>
+                </header>
+
+                <div class="section-actions">
+                    <button id="addNewProjectBtn">إضافة مشروع جديد</button>
+                </div>
+
+                <div class="project-grid" id="projectGrid">
+                    </div>
+            </section>
+
+            <section id="clients-suppliers" class="content-section">
+                <header class="header">
+                    <h1>العملاء والموردون</h1>
+                </header>
+                <div class="section-actions">
+                    <button id="addNewEntityBtn">إضافة عميل/مورد جديد</button>
+                </div>
+                <div class="clients-suppliers-grid" id="clientsSuppliersGrid">
+                    </div>
+            </section>
+
+            <section id="materials" class="content-section">
+                <header class="header">
+                    <h1>إدارة المواد</h1>
+                </header>
+                <div class="section-actions">
+                    <button id="addNewMaterialBtn">إضافة مادة جديدة</button>
+                </div>
+                <div class="materials-table-container">
+                    <table class="materials-table">
+                        <thead>
+                            <tr>
+                                <th>اسم المادة</th>
+                                <th>الكمية المتاحة</th>
+                                <th>سعر الوحدة (رس)</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="materialsTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="create-invoice" class="content-section">
+                <header class="header">
+                    <h1>إصدار فاتورة جديدة</h1>
+                </header>
+                <div class="invoice-form-container">
+                    <form id="invoiceForm">
+                        <div class="form-group">
+                            <label for="invoiceClient">العميل:</label>
+                            <select id="invoiceClient" required>
+                                <option value="">اختر عميل...</option>
+                                </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="invoiceDate">تاريخ الفاتورة:</label>
+                            <input type="date" id="invoiceDate" required>
+                        </div>
+
+                        <div class="invoice-items-header">بنود الفاتورة</div>
+                        <div id="invoiceItemsContainer">
+                            </div>
+                        <div class="section-actions" style="justify-content: flex-start; margin-top: 0;">
+                            <button type="button" id="addInvoiceItemBtn" class="item-action-btn add-item">إضافة بند</button>
+                        </div>
+
+                        <div class="invoice-total">
+                            الإجمالي: <span id="invoiceGrandTotal">0 رس</span>
+                        </div>
+
+                        <button type="submit" class="invoice-submit-btn">إصدار الفاتورة</button>
+                    </form>
+                </div>
+            </section>
+
+
+            <section id="expenses-income" class="content-section">
+                <header class="header">
+                    <h1>المصروفات والإيرادات</h1>
+                </header>
+
+                <div class="transactions-summary">
+                    <div class="summary-card income">
+                        <div class="label">إجمالي الإيرادات</div>
+                        <div class="value" id="totalIncome">0 رس</div>
+                    </div>
+                    <div class="summary-card expense">
+                        <div class="label">إجمالي المصروفات</div>
+                        <div class="value" id="totalExpenses">0 رس</div>
+                    </div>
+                    <div class="summary-card balance">
+                        <div class="label">الرصيد الصافي</div>
+                        <div class="value" id="netBalance">0 رس</div>
+                    </div>
+                </div>
+
+                <div class="section-actions">
+                    <button id="addNewTransactionBtn">إضافة معاملة جديدة</button>
+                    <button id="addMaterialPurchaseBtn" class="secondary-btn">إضافة مصروف شراء مواد</button>
+                </div>
+
+                <div class="transactions-table-container">
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>التاريخ</th>
+                                <th>الوصف</th>
+                                <th>النوع</th>
+                                <th>الفئة</th>
+                                <th>المبلغ (رس)</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactionsTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="financial-reports" class="content-section">
+                <header class="header">
+                    <h1>التقارير المالية</h1>
+                </header>
+
+                <div class="financial-filters">
+                    <div class="filter-group">
+                        <label for="reportYear">السنة:</label>
+                        <select id="reportYear">
+                            </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="reportFromDate">من تاريخ:</label>
+                        <input type="date" id="reportFromDate">
+                    </div>
+                    <div class="filter-group">
+                        <label for="reportToDate">إلى تاريخ:</label>
+                        <input type="date" id="reportToDate">
+                    </div>
+                    <div class="filter-group action-group">
+                        <button id="applyReportFilterBtn">تطبيق الفلتر</button>
+                    </div>
+                </div>
+
+                <div class="financial-charts-grid">
+                    <div class="financial-chart-card">
+                        <h3 id="cashFlowChartTitle">التدفقات النقدية</h3>
+                        <canvas id="cashFlowChart"></canvas>
+                    </div>
+                    <div class="financial-chart-card">
+                        <h3 id="profitLossChartTitle">الربح والخسارة</h3>
+                        <canvas id="profitLossChart"></canvas>
+                    </div>
+                    <div class="financial-chart-card">
+                        <h3 id="revenueByProjectChartTitle">توزيع الإيرادات حسب الفئة</h3>
+                        <canvas id="revenueByProjectChart"></canvas>
+                    </div>
+                     <div class="financial-chart-card">
+                        <h3 id="expensesByCategoryChartTitle">المصروفات حسب الفئة</h3>
+                        <canvas id="expensesByCategoryChart"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <section id="user-management" class="content-section">
+                <header class="header">
+                    <h1>إدارة المستخدمين</h1>
+                </header>
+                <div class="section-actions">
+                    <button id="addNewUserBtn">إضافة مستخدم جديد</button>
+                </div>
+                <div class="users-table-container">
+                    <table class="users-table">
+                        <thead>
+                            <tr>
+                                <th>الاسم</th>
+                                <th>البريد الإلكتروني</th>
+                                <th>الدور</th>
+                                <th>آخر نشاط</th>
+                                <th>الإجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="settings" class="content-section">
+                <header class="header">
+                    <h1>الإعدادات</h1>
+                </header>
+                <div class="settings-form-container">
+                    <form id="settingsForm">
+                        <div class="form-group">
+                            <label for="companyNameSetting">اسم الشركة:</label>
+                            <input type="text" id="companyNameSetting">
+                        </div>
+                         <div class="form-group">
+                            <label for="userNameSetting">اسم المستخدم:</label>
+                            <input type="text" id="userNameSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="defaultEmailSetting">البريد الإلكتروني الافتراضي:</label>
+                            <input type="email" id="defaultEmailSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="dateFormatSetting">تنسيق التاريخ:</label>
+                            <select id="dateFormatSetting">
+                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                <option value="DD-MM-YYYY">DD-MM-YYYY</option>
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="currencySymbolSetting">رمز العملة:</label>
+                            <input type="text" id="currencySymbolSetting">
+                        </div>
+
+                        <h3>تخصيص الألوان</h3>
+                        <div class="form-group">
+                            <label for="primaryDarkColorSetting">اللون الأساسي الداكن:</label>
+                            <input type="color" id="primaryDarkColorSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="accentRedColorSetting">اللون المميز (أحمر):</label>
+                            <input type="color" id="accentRedColorSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="lightGreyColorSetting">لون الخلفية الفاتح:</label>
+                            <input type="color" id="lightGreyColorSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="mediumGreyColorSetting">لون الحدود/الخطوط:</label>
+                            <input type="color" id="mediumGreyColorSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="textDarkColorSetting">لون النص الأساسي:</label>
+                            <input type="color" id="textDarkColorSetting">
+                        </div>
+                        <div class="form-group">
+                            <label for="textLightColorSetting">لون النص الثانوي:</label>
+                            <input type="color" id="textLightColorSetting">
+                        </div>
+
+
+                        <button type="submit" class="save-settings-btn">حفظ الإعدادات</button>
+                        <button type="button" class="reset-colors-btn" id="resetColorsBtn">إعادة تعيين الألوان</button>
+                    </form>
+
+                    <hr style="margin: 40px 0; border: none; border-top: 1px dashed var(--medium-grey);">
+
+                    <h3>تحديث بيانات الاعتماد</h3>
+                    <form id="updateCredentialsForm">
+                        <div class="form-group">
+                            <label for="currentEmail">البريد الإلكتروني الحالي:</label>
+                            <input type="email" id="currentEmail" required readonly>
+                        </div>
+                        <div class="form-group">
+                            <label for="newEmail">البريد الإلكتروني الجديد:</label>
+                            <input type="email" id="newEmail">
+                        </div>
+                        <div class="form-group">
+                            <label for="currentPassword">كلمة المرور الحالية:</label>
+                            <input type="password" id="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">كلمة المرور الجديدة (اختياري):</label>
+                            <input type="password" id="newPassword">
+                        </div>
+                        <button type="submit" class="update-credentials-btn">تحديث بيانات الاعتماد</button>
+                        <div id="credentialsUpdateMessage" class="credentials-update-message" style="display: none;"></div>
+                    </form>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeProjectModal">&times;</span>
+            <h3 id="projectModalTitle">إضافة مشروع جديد</h3>
+            <form id="projectForm">
+                <input type="hidden" id="projectId">
+                <div class="form-group">
+                    <label for="projectName">اسم المشروع:</label>
+                    <input type="text" id="projectName" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectDescription">الوصف:</label>
+                    <textarea id="projectDescription" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="projectStatus">الحالة:</label>
+                    <select id="projectStatus" required>
+                        <option value="in-progress">قيد التنفيذ</option>
+                        <option value="completed">مكتمل</option>
+                        <option value="on-hold">معلق</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="projectClient">العميل:</label>
+                    <input type="text" id="projectClient" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectBudget">الميزانية (رس):</label>
+                    <input type="number" id="projectBudget" required min="0" step="1000">
+                </div>
+                <div class="form-group">
+                    <label for="projectStartDate">تاريخ البدء:</label>
+                    <input type="date" id="projectStartDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectEndDate">تاريخ الانتهاء المتوقع:</label>
+                    <input type="date" id="projectEndDate">
+                </div>
+                <div class="form-group">
+                    <label for="projectNotes">ملاحظات (اختياري):</label>
+                    <textarea id="projectNotes"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">حفظ المشروع</button>
+                    <button type="button" class="cancel-btn" id="cancelProjectForm">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="entityModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeEntityModal">&times;</span>
+            <h3 id="entityModalTitle">إضافة عميل/مورد جديد</h3>
+            <form id="entityForm">
+                <input type="hidden" id="entityId">
+                <div class="form-group">
+                    <label for="entityType">النوع:</label>
+                    <select id="entityType" required>
+                        <option value="client">عميل</option>
+                        <option value="supplier">مورد</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="entityName">الاسم (شركة/فرد):</label>
+                    <input type="text" id="entityName" required>
+                </div>
+                <div class="form-group">
+                    <label for="entityContactPerson">شخص الاتصال:</label>
+                    <input type="text" id="entityContactPerson">
+                </div>
+                <div class="form-group">
+                    <label for="entityEmail">البريد الإلكتروني:</label>
+                    <input type="email" id="entityEmail">
+                </div>
+                <div class="form-group">
+                    <label for="entityPhone">رقم الهاتف:</label>
+                    <input type="text" id="entityPhone">
+                </div>
+                <div class="form-group">
+                    <label for="entityAddress">العنوان:</label>
+                    <textarea id="entityAddress"></textarea>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">حفظ</button>
+                    <button type="button" class="cancel-btn" id="cancelEntityForm">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="transactionModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeTransactionModal">&times;</span>
+            <h3 id="transactionModalTitle">إضافة معاملة جديدة</h3>
+            <form id="transactionForm">
+                <input type="hidden" id="transactionId">
+                <div class="form-group">
+                    <label for="transactionDate">التاريخ:</label>
+                    <input type="date" id="transactionDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionDescription">الوصف:</label>
+                    <input type="text" id="transactionDescription" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionType">النوع:</label>
+                    <select id="transactionType" required>
+                        <option value="income">إيراد</option>
+                        <option value="expense">مصروف</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="transactionCategory">الفئة:</label>
+                    <input type="text" id="transactionCategory" required>
+                </div>
+                <div class="form-group">
+                    <label for="transactionAmount">المبلغ (رس):</label>
+                    <input type="number" id="transactionAmount" required min="0" step="0.01">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">حفظ المعاملة</button>
+                    <button type="button" class="cancel-btn" id="cancelTransactionForm">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeUserModal">&times;</span>
+            <h3 id="userModalTitle">إضافة مستخدم جديد</h3>
+            <form id="userForm">
+                <input type="hidden" id="userId">
+                <div class="form-group">
+                    <label for="userName">الاسم:</label>
+                    <input type="text" id="userName" required>
+                </div>
+                <div class="form-group">
+                    <label for="userEmail">البريد الإلكتروني:</label>
+                    <input type="email" id="userEmail" required>
+                </div>
+                <div class="form-group">
+                    <label for="userRole">الدور:</label>
+                    <select id="userRole" required>
+                        <option value="admin">مدير</option>
+                        <option value="accountant">محاسب</option>
+                        <option value="project_manager">مدير مشاريع</option>
+                        <option value="viewer">مشاهد</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="userPassword">كلمة المرور (تجاهل عند التعديل ما لم ترغب في التغيير):</label>
+                    <input type="password" id="userPassword">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">حفظ المستخدم</button>
+                    <button type="button" class="cancel-btn" id="cancelUserForm">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="materialModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeMaterialModal">&times;</span>
+            <h3 id="materialModalTitle">إضافة مادة جديدة</h3>
+            <form id="materialForm">
+                <input type="hidden" id="materialId">
+                <div class="form-group">
+                    <label for="materialName">اسم المادة:</label>
+                    <input type="text" id="materialName" required>
+                </div>
+                <div class="form-group">
+                    <label for="materialQuantity">الكمية المتاحة:</label>
+                    <input type="number" id="materialQuantity" required min="0">
+                </div>
+                <div class="form-group">
+                    <label for="materialUnitPrice">سعر الوحدة (رس):</label>
+                    <input type="number" id="materialUnitPrice" required min="0" step="0.01">
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">حفظ المادة</button>
+                    <button type="button" class="cancel-btn" id="cancelMaterialForm">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="materialPurchaseModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="closeMaterialPurchaseModal">&times;</span>
+            <h3>تسجيل شراء مواد</h3>
+            <form id="materialPurchaseForm">
+                <div class="form-group">
+                    <label for="purchaseMaterial">المادة:</label>
+                    <select id="purchaseMaterial" required>
+                        <option value="">اختر مادة...</option>
+                        </select>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseQuantity">الكمية المشتراة:</label>
+                    <input type="number" id="purchaseQuantity" required min="1">
+                </div>
+                <div class="form-group">
+                    <label for="purchaseDate">تاريخ الشراء:</label>
+                    <input type="date" id="purchaseDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="purchaseSupplier">المورد:</label>
+                    <select id="purchaseSupplier" required>
+                        <option value="">اختر مورد...</option>
+                        </select>
+                </div>
+                <div class="modal-buttons">
+                    <button type="submit" class="submit-btn">تسجيل الشراء</button>
+                    <button type="button" class="cancel-btn" id="cancelMaterialPurchaseForm">إلغاء</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="invoicePdfContent" style="position: absolute; left: -9999px; top: -9999px;">
+        </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginPage = document.getElementById('loginPage');
+            const dashboardLayout = document.getElementById('dashboardLayout');
+            const loginForm = document.getElementById('loginForm');
+            const loginError = document.getElementById('loginError');
+
+            const sidebarLinks = document.querySelectorAll('.sidebar nav ul li a');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            // Project Management Elements
+            const projectGrid = document.getElementById('projectGrid');
+            const addNewProjectBtn = document.getElementById('addNewProjectBtn');
+            const projectModal = document.getElementById('projectModal');
+            const closeProjectModalBtn = document.getElementById('closeProjectModal');
+            const cancelProjectFormBtn = document.getElementById('cancelProjectForm');
+            const projectForm = document.getElementById('projectForm');
+            const projectModalTitle = document.getElementById('projectModalTitle');
+
+            // Clients & Suppliers Elements
+            const clientsSuppliersGrid = document.getElementById('clientsSuppliersGrid');
+            const addNewEntityBtn = document.getElementById('addNewEntityBtn');
+            const entityModal = document.getElementById('entityModal');
+            const closeEntityModalBtn = document.getElementById('closeEntityModal');
+            const cancelEntityFormBtn = document.getElementById('cancelEntityForm');
+            const entityForm = document.getElementById('entityForm');
+            const entityModalTitle = document.getElementById('entityModalTitle');
+
+            // Expenses & Income Elements
+            const totalIncomeDisplay = document.getElementById('totalIncome');
+            const totalExpensesDisplay = document.getElementById('totalExpenses');
+            const netBalanceDisplay = document.getElementById('netBalance');
+            const addNewTransactionBtn = document.getElementById('addNewTransactionBtn');
+            const transactionsTableBody = document.getElementById('transactionsTableBody');
+            const transactionModal = document.getElementById('transactionModal');
+            const closeTransactionModalBtn = document.getElementById('closeTransactionModal');
+            const cancelTransactionFormBtn = document.getElementById('cancelTransactionForm');
+            const transactionForm = document.getElementById('transactionForm');
+            const transactionModalTitle = document.getElementById('transactionModalTitle');
+            const addMaterialPurchaseBtn = document.getElementById('addMaterialPurchaseBtn');
+            const materialPurchaseModal = document.getElementById('materialPurchaseModal');
+            const closeMaterialPurchaseModalBtn = document.getElementById('closeMaterialPurchaseModal');
+            const cancelMaterialPurchaseFormBtn = document.getElementById('cancelMaterialPurchaseForm');
+            const materialPurchaseForm = document.getElementById('materialPurchaseForm');
+            const purchaseMaterialSelect = document.getElementById('purchaseMaterial');
+            const purchaseSupplierSelect = document.getElementById('purchaseSupplier');
+
+
+            // Dashboard KPI & Chart Elements
+            const dashboardTotalIncome = document.getElementById('dashboardTotalIncome');
+            const dashboardTotalExpenses = document.getElementById('dashboardTotalExpenses');
+            const dashboardNetProfit = document.getElementById('dashboardNetProfit');
+            const dashboardIncomeChange = document.getElementById('dashboardIncomeChange');
+            const dashboardExpensesChange = document.getElementById('dashboardExpensesChange');
+            const dashboardProfitChange = document.getElementById('dashboardProfitChange');
+            const dashboardActivityList = document.getElementById('dashboardActivityList');
+            const dashboardUserNameDisplay = document.getElementById('dashboardUserNameDisplay');
+
+
+            // Financial Reports Elements
+            const reportYearSelect = document.getElementById('reportYear');
+            const reportFromDateInput = document.getElementById('reportFromDate');
+            const reportToDateInput = document.getElementById('reportToDate');
+            const applyReportFilterBtn = document.getElementById('applyReportFilterBtn');
+
+            const cashFlowChartTitle = document.getElementById('cashFlowChartTitle');
+            const profitLossChartTitle = document.getElementById('profitLossChartTitle');
+            const revenueByProjectChartTitle = document.getElementById('revenueByProjectChartTitle');
+            const expensesByCategoryChartTitle = document.getElementById('expensesByCategoryChartTitle');
+
+
+            let dashboardRevenueExpensesChartInstance = null;
+            let dashboardExpensesByCategoryChartInstance = null;
+
+            let cashFlowChartInstance = null;
+            let profitLossChartInstance = null;
+            let revenueByCategoriesChartInstance = null;
+            let expensesByCategoriesReportChartInstance = null;
+
+            // User Management Elements
+            const addNewUserBtn = document.getElementById('addNewUserBtn');
+            const usersTableBody = document.getElementById('usersTableBody');
+            const userModal = document.getElementById('userModal');
+            const closeUserModalBtn = document.getElementById('closeUserModal');
+            const cancelUserFormBtn = document.getElementById('cancelUserForm');
+            const userForm = document.getElementById('userForm');
+            const userModalTitle = document.getElementById('userModalTitle');
+
+            // Settings Elements
+            const settingsForm = document.getElementById('settingsForm');
+            const companyNameSetting = document.getElementById('companyNameSetting');
+            const userNameSetting = document.getElementById('userNameSetting');
+            const defaultEmailSetting = document.getElementById('defaultEmailSetting');
+            const dateFormatSetting = document.getElementById('dateFormatSetting');
+            const currencySymbolSetting = document.getElementById('currencySymbolSetting');
+            const primaryDarkColorSetting = document.getElementById('primaryDarkColorSetting');
+            const accentRedColorSetting = document.getElementById('accentRedColorSetting');
+            const lightGreyColorSetting = document.getElementById('lightGreyColorSetting');
+            const mediumGreyColorSetting = document.getElementById('mediumGreyColorSetting');
+            const textDarkColorSetting = document.getElementById('textDarkColorSetting');
+            const textLightColorSetting = document.getElementById('textLightColorSetting');
+            const resetColorsBtn = document.getElementById('resetColorsBtn'); // New button element
+
+            // New Credentials Update Elements
+            const updateCredentialsForm = document.getElementById('updateCredentialsForm');
+            const currentEmailInput = document.getElementById('currentEmail'); // New email input
+            const newEmailInput = document.getElementById('newEmail'); // New email input
+            const currentPasswordInput = document.getElementById('currentPassword');
+            const newPasswordInput = document.getElementById('newPassword');
+            const credentialsUpdateMessage = document.getElementById('credentialsUpdateMessage'); // Changed ID
+
+
+            // Material Management Elements
+            const materialsTableBody = document.getElementById('materialsTableBody');
+            const addNewMaterialBtn = document.getElementById('addNewMaterialBtn');
+            const materialModal = document.getElementById('materialModal');
+            const closeMaterialModalBtn = document.getElementById('closeMaterialModal');
+            const cancelMaterialFormBtn = document.getElementById('cancelMaterialForm');
+            const materialForm = document.getElementById('materialForm');
+            const materialModalTitle = document.getElementById('materialModalTitle');
+
+            // Invoice Creation Elements
+            const invoiceForm = document.getElementById('invoiceForm');
+            const invoiceClientSelect = document.getElementById('invoiceClient');
+            const invoiceDateInput = document.getElementById('invoiceDate');
+            const invoiceItemsContainer = document.getElementById('invoiceItemsContainer');
+            const addInvoiceItemBtn = document.getElementById('addInvoiceItemBtn');
+            const invoiceGrandTotalDisplay = document.getElementById('invoiceGrandTotal');
+            let invoiceItemCounter = 0;
+            const invoicePdfContent = document.getElementById('invoicePdfContent');
+
+            // Logout Button
+            const logoutButton = document.getElementById('logoutButton');
+
+
+            // --- Data Stores (Simulated Backend) ---
+            let projects = [
+                {
+                    id: 1, name: 'مشروع بناء برج الماسة', description: 'مشروع بناء برج تجاري مكون من 25 طابقاً في المنطقة المركزية، يشمل مكاتب ومحلات تجارية.', status: 'in-progress', client: 'شركة الخليج للاستثمار', budget: 15000000, startDate: '2024-03-01', endDate: '2026-12-31', notes: ''
+                },
+                {
+                    id: 2, name: 'مشروع تطوير مجمع سكني', description: 'تطوير مجمع سكني يضم 50 فيلا فاخرة وبنية تحتية متكاملة في الضواحي.', status: 'in-progress', client: 'مجموعة الفنار العقارية', budget: 22000000, startDate: '2023-09-15', endDate: '2025-06-30', notes: ''
+                },
+                {
+                    id: 3, name: 'ترميم وتجديد فندق الأندلس', description: 'مشروع ترميم شامل وتجديد داخلي وخارجي لفندق الأندلس التاريخي.', status: 'completed', client: 'شركة الضيافة الذهبية', budget: 8500000, startDate: '2023-01-10', endDate: '2024-02-28', notes: ''
+                },
+                {
+                    id: 4, name: 'بناء مستودع لوجستي', description: 'إنشاء مستودع كبير بمواصفات عالمية لدعم العمليات اللوجستية لشركة شحن.', status: 'on-hold', client: 'الناقل السريع للشحن', budget: 6000000, startDate: '2024-07-01', endDate: '2025-01-31', notes: 'معلق بانتظار الموافقات الحكومية.'
+                }
+            ];
+            let nextProjectId = projects.length > 0 ? Math.max(...projects.map(p => p.id)) + 1 : 1;
+
+            let entities = [ // Customers and Suppliers
+                {
+                    id: 1, type: 'client', name: 'شركة الخليج للاستثمار', contactPerson: 'أحمد فؤاد', email: 'ahmed@gulfinvest.com', phone: '0501234567', address: 'طريق الملك فهد، الرياض'
+                },
+                {
+                    id: 2, type: 'supplier', name: 'الموردون العرب لمواد البناء', contactPerson: 'فاطمة الزهراء', email: 'fatima@arabsupply.com', phone: '0559876543', address: 'المنطقة الصناعية، جدة'
+                },
+                {
+                    id: 3, type: 'client', name: 'مجموعة الفنار العقارية', contactPerson: 'خالد المنصور', email: 'khalid@alfanar.com', phone: '0567890123', address: 'شارع الأمير سلطان، مكة'
+                },
+                {
+                    id: 4, type: 'supplier', name: 'الشركة المتحدة للمعدات الثقيلة', contactPerson: 'سعيد العتيبي', email: 'saeed@unitedheavy.com', phone: '0534567890', address: 'مخرج 17، الدمام'
+                }
+            ];
+            let nextEntityId = entities.length > 0 ? Math.max(...entities.map(e => e.id)) + 1 : 1;
+
+            let materials = [
+                { id: 1, name: 'أسمنت بورتلاند', quantity: 500, unitPrice: 150 },
+                { id: 2, name: 'حديد تسليح 12 مم', quantity: 2000, unitPrice: 3.5 },
+                { id: 3, name: 'طوب أحمر', quantity: 10000, unitPrice: 1.2 },
+                { id: 4, name: 'أخشاب بناء', quantity: 150, unitPrice: 500 },
+                { id: 5, name: 'أنابيب PVC', quantity: 300, unitPrice: 25 }
+            ];
+            let nextMaterialId = materials.length > 0 ? Math.max(...materials.map(m => m.id)) + 1 : 1;
+
+            let transactions = [ // Expenses and Income - More diverse data for reports
+                { id: 1, date: '2024-01-15', description: 'دفعة مشروع برج الماسة (قسط أول)', type: 'income', category: 'المشاريع', amount: 500000 },
+                { id: 2, date: '2024-01-20', description: 'شراء أسمنت للمشروع السكني', type: 'expense', category: 'مواد بناء', amount: 85000 },
+                { id: 3, date: '2024-02-01', description: 'رواتب موظفي شهر يناير', type: 'expense', category: 'رواتب وأجور', amount: 120000 },
+                { id: 4, date: '2024-02-10', description: 'إيراد خدمات استشارية (الرياض)', type: 'income', category: 'خدمات', amount: 75000 },
+                { id: 5, date: '2024-03-05', description: 'إيجار آليات ثقيلة (مشروع فندق)', type: 'expense', category: 'معدات وإيجارات', amount: 20000 },
+                { id: 6, date: '2024-03-20', description: 'دفعة من مشروع تطوير مجمع سكني', type: 'income', category: 'المشاريع', amount: 400000 },
+                { id: 7, date: '2024-04-01', description: 'رواتب موظفي شهر مارس', type: 'expense', category: 'رواتب وأجور', amount: 125000 },
+                { id: 8, date: '2024-04-10', description: 'صيانة مكتب', type: 'expense', category: 'مصروفات تشغيلية', amount: 5000 },
+                { id: 9, date: '2024-05-01', description: 'دفعة نهائية من مشروع فندق الأندلس', type: 'income', category: 'المشاريع', amount: 350000 },
+                { id: 10, date: '2024-05-15', description: 'شراء حديد تسليح', type: 'expense', category: 'مواد بناء', amount: 90000 },
+                { id: 11, date: '2024-06-01', description: 'رواتب موظفي شهر مايو', type: 'expense', category: 'رواتب وأجور', amount: 130000 },
+                { id: 12, date: '2024-06-10', description: 'إيراد مشروع جديد (مستودع لوجستي)', type: 'income', category: 'المشاريع', amount: 200000 },
+                { id: 13, date: '2024-06-20', description: 'تكاليف تسويق', type: 'expense', category: 'مصروفات تشغيلية', amount: 10000 },
+                { id: 14, date: '2024-07-01', description: 'دفعة مقدمة لمشروع جديد', type: 'income', category: 'المشاريع', amount: 100000 },
+                { id: 15, date: '2024-07-05', description: 'صيانة معدات', type: 'expense', category: 'معدات وإيجارات', amount: 8000 },
+                { id: 16, date: '2023-10-01', description: 'إيراد مشروع قديم (2023)', type: 'income', category: 'المشاريع', amount: 150000 },
+                { id: 17, date: '2023-11-05', description: 'مصروفات تشغيلية (2023)', type: 'expense', category: 'مصروفات تشغيلية', amount: 30000 },
+                { id: 18, date: '2022-08-01', description: 'إيراد استثماري (2022)', type: 'income', category: 'استثمارات', amount: 100000 }
+            ];
+            let nextTransactionId = transactions.length > 0 ? Math.max(...transactions.map(t => t.id)) + 1 : 1;
+
+            let users = [
+                { id: 1, name: 'رواد التكامل المتحدة للمقاولات العامة', email: 'Adminrowad2026@gmail.com', role: 'admin', lastActivity: '2025-06-28' },
+                { id: 2, name: 'أحمد المحاسب', email: 'ahmed@company.com', role: 'accountant', lastActivity: '2025-06-27' },
+                { id: 3, name: 'سارة مديرة المشاريع', email: 'sara@company.com', role: 'project_manager', lastActivity: '2025-06-29' },
+                { id: 4, name: 'فهد المشاهد', email: 'fahad@company.com', role: 'viewer', lastActivity: '2025-06-26' }
+            ];
+            let nextUserId = users.length > 0 ? Math.max(...users.map(u => u.id)) + 1 : 1;
+
+
+            // Global settings object (persisted locally for demo)
+            let appSettings = JSON.parse(localStorage.getItem('appSettings')) || {
+                companyName: 'شركة رواد التكامل المتحدة للمقاولات العامة',
+                userName: 'رواد التكامل المتحدة للمقاولات العامة', // Default user name
+                defaultEmail: 'info@rowad-integ.com',
+                dateFormat: 'YYYY-MM-DD',
+                currencySymbol: 'رس',
+                // Default colors (matching original CSS :root defaults)
+                primaryDarkColor: '#002147',
+                accentRedColor: '#D45744',
+                whiteColor: '#FFFFFF',
+                lightGreyColor: '#F5F7FA',
+                mediumGreyColor: '#e0e0e0',
+                textDarkColor: '#333333',
+                textLightColor: '#666666'
+            };
+
+            // Define original default colors for reset functionality
+            const defaultColors = {
+                primaryDarkColor: '#002147',
+                accentRedColor: '#D45744',
+                whiteColor: '#FFFFFF',
+                lightGreyColor: '#F5F7FA',
+                mediumGreyColor: '#e0e0e0',
+                textDarkColor: '#333333',
+                textLightColor: '#666666'
+            };
+
+            // Hardcoded admin credentials for the demo
+            let adminCredentials = {
+                email: 'Adminrowad2026@gmail.com',
+                password: 'Admin rowad 2026'
+            };
+
+
+            // Set initial state: show login, hide dashboard layout
+            loginPage.style.display = 'flex';
+            dashboardLayout.style.display = 'none';
+
+            // Populate year filter for financial reports
+            populateReportYearFilter();
+
+            // --- Login Logic ---
+            loginForm.addEventListener('submit', function(event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                if (email === adminCredentials.email && password === adminCredentials.password) {
+                    loginPage.style.display = 'none';         // Hide login page
+                    dashboardLayout.style.display = 'flex';   // Show dashboard layout
+                    loginError.style.display = 'none';        // Hide any previous error
+
+                    showSection('dashboard'); // Show the default dashboard section
+                    initializeDashboardContent(); // Initialize dashboard KPIs and charts
+                } else {
+                    loginError.style.display = 'block'; // Show error message
+                }
+            });
+
+            // --- Sidebar Navigation Logic ---
+            sidebarLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault(); // Prevent default link behavior
+                    const targetSectionId = this.dataset.section;
+
+                    // Remove active class from all links and add to clicked link
+                    sidebarLinks.forEach(item => item.classList.remove('active'));
+                    this.classList.add('active');
+
+                    // Show the target section and hide others
+                    showSection(targetSectionId);
+
+                    // Render content specific to the section
+                    if (targetSectionId === 'dashboard') {
+                        initializeDashboardContent(); // Re-initialize dashboard when navigating to it
+                    } else if (targetSectionId === 'projects') {
+                        renderProjects();
+                    } else if (targetSectionId === 'clients-suppliers') {
+                        renderEntities();
+                    } else if (targetSectionId === 'materials') { // New Material section
+                        renderMaterials();
+                    } else if (targetSectionId === 'create-invoice') { // New Invoice section
+                        renderInvoiceForm();
+                    }
+                    else if (targetSectionId === 'expenses-income') {
+                        renderTransactions();
+                    } else if (targetSectionId === 'financial-reports') {
+                        initializeFinancialReportsCharts();
+                    } else if (targetSectionId === 'user-management') {
+                        renderUsers();
+                    } else if (targetSectionId === 'settings') {
+                        loadSettings(); // Load current settings into the form
+                        credentialsUpdateMessage.style.display = 'none'; // Hide password message
+                    }
+                });
+            });
+
+            // --- Logout Logic ---
+            logoutButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('هل أنت متأكد أنك تريد تسجيل الخروج؟')) {
+                    // In a real application, you'd invalidate sessions, clear tokens etc.
+                    // For this demo, we just switch back to the login page.
+                    loginPage.style.display = 'flex';
+                    dashboardLayout.style.display = 'none';
+                    loginForm.reset(); // Clear login form fields
+                    loginError.style.display = 'none'; // Hide error message
+                    sidebarLinks.forEach(item => item.classList.remove('active')); // Remove active class from sidebar
+                    document.querySelector('[data-section="dashboard"]').classList.add('active'); // Set dashboard as active default
+                }
+            });
+
+
+            // Function to show a specific content section and hide others
+            function showSection(id) {
+                contentSections.forEach(section => {
+                    if (section.id === id) {
+                        section.classList.add('active');
+                    } else {
+                        section.classList.remove('active');
+                    }
+                });
+            }
+
+            // --- Dashboard Content Initialization ---
+            function initializeDashboardContent() {
+                // Get current month's data
+                const today = new Date();
+                const currentMonth = today.getMonth(); // 0-11
+                const currentYear = today.getFullYear();
+
+                const filteredCurrentMonthTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.getMonth() === currentMonth && transactionDate.getFullYear() === currentYear;
+                });
+
+                let currentMonthIncome = 0;
+                let currentMonthExpenses = 0;
+                filteredCurrentMonthTransactions.forEach(t => {
+                    if (t.type === 'income') {
+                        currentMonthIncome += t.amount;
+                    } else {
+                        currentMonthExpenses += t.amount;
+                    }
+                });
+                const currentMonthNetProfit = currentMonthIncome - currentMonthExpenses;
+
+                // Get previous month's data for comparison (simple example)
+                const prevMonthDate = new Date(today.getFullYear(), today.getMonth() - 1, 1);
+                const prevMonth = prevMonthDate.getMonth();
+                const prevYear = prevMonthDate.getFullYear();
+
+                const filteredPrevMonthTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.getMonth() === prevMonth && transactionDate.getFullYear() === prevYear;
+                });
+                let prevMonthIncome = 0;
+                let prevMonthExpenses = 0;
+                filteredPrevMonthTransactions.forEach(t => {
+                    if (t.type === 'income') {
+                        prevMonthIncome += t.amount;
+                    } else {
+                        prevMonthExpenses += t.amount;
+                    }
+                });
+
+                // Update KPI Cards
+                dashboardTotalIncome.textContent = currentMonthIncome.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol;
+                dashboardTotalExpenses.textContent = currentMonthExpenses.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol;
+                dashboardNetProfit.textContent = currentMonthNetProfit.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol;
+                dashboardUserNameDisplay.textContent = appSettings.userName;
+
+
+                // Calculate and update change percentages (simplified)
+                const incomeChange = calculatePercentageChange(currentMonthIncome, prevMonthIncome);
+                const expensesChange = calculatePercentageChange(currentMonthExpenses, prevMonthExpenses);
+                const profitChange = calculatePercentageChange(currentMonthNetProfit, (prevMonthIncome - prevMonthExpenses));
+
+
+                updateChangeIndicator(dashboardIncomeChange, incomeChange, 'عن الشهر الماضي', false);
+                updateChangeIndicator(dashboardExpensesChange, expensesChange, 'عن الشهر الماضي', true); // Invert color for expenses
+                updateChangeIndicator(dashboardProfitChange, profitChange, 'عن الشهر الماضي', false);
+
+                // Update recent activity
+                renderDashboardActivity();
+
+                // Initialize/Update Dashboard Charts
+                renderDashboardCharts();
+            }
+
+            function calculatePercentageChange(currentValue, previousValue) {
+                if (previousValue === 0) {
+                    return currentValue > 0 ? 100 : 0; // If prev is 0 and current is positive, it's 100% growth. If 0, no change.
+                }
+                return ((currentValue - previousValue) / previousValue * 100).toFixed(1);
+            }
+
+
+            function updateChangeIndicator(element, percentage, text, isInverted = false) {
+                element.className = 'change'; // Reset classes
+                if (percentage > 0) {
+                    element.classList.add(isInverted ? 'negative' : 'positive');
+                    element.innerHTML = `↑ ${Math.abs(percentage)}% ${text}`;
+                } else if (percentage < 0) {
+                    element.classList.add(isInverted ? 'positive' : 'negative');
+                    element.innerHTML = `↓ ${Math.abs(percentage)}% ${text}`;
+                } else {
+                    element.innerHTML = `0% ${text}`;
+                }
+            }
+
+            function renderDashboardActivity() {
+                dashboardActivityList.innerHTML = '';
+                // Get the latest 5 transactions
+                const recentTransactions = [...transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+
+                if (recentTransactions.length === 0) {
+                    dashboardActivityList.innerHTML = '<li style="text-align: center; color: var(--text-light);">لا توجد نشاطات حديثة لعرضها.</li>';
+                    return;
+                }
+
+                recentTransactions.forEach(t => {
+                    const activityItem = document.createElement('li');
+                    activityItem.classList.add('activity-item');
+                    const typeText = t.type === 'income' ? 'إيراد' : 'مصروف';
+                    const descriptionText = `تم تسجيل ${typeText} ${t.category} بمبلغ ${t.amount.toLocaleString('ar-SA')} ${appSettings.currencySymbol}.`;
+                    
+                    // Basic time ago calculation (for demo)
+                    const now = new Date();
+                    const transactionDateTime = new Date(t.date);
+                    const diffSeconds = Math.floor((now - transactionDateTime) / 1000);
+                    let timeAgoText;
+                    if (diffSeconds < 60) timeAgoText = 'الآن';
+                    else if (diffSeconds < 3600) timeAgoText = `${Math.floor(diffSeconds / 60)} دقيقة مضت`;
+                    else if (diffSeconds < 86400) timeAgoText = `${Math.floor(diffSeconds / 3600)} ساعة مضت`;
+                    else if (diffSeconds < 86400 * 2) timeAgoText = 'أمس';
+                    else timeAgoText = `${Math.floor(diffSeconds / 86400)} أيام مضت`;
+
+                    activityItem.innerHTML = `
+                        <div class="description">${descriptionText}</div>
+                        <div class="date">${timeAgoText}</div>
+                    `;
+                    dashboardActivityList.appendChild(activityItem);
+                });
+            }
+
+            function renderDashboardCharts() {
+                if (dashboardRevenueExpensesChartInstance) dashboardRevenueExpensesChartInstance.destroy();
+                if (dashboardExpensesByCategoryChartInstance) dashboardExpensesByCategoryChartInstance.destroy();
+
+                const monthsLabels = [];
+                const revenueData = [];
+                const expensesData = [];
+                const today = new Date();
+
+                // Generate last 6 months for labels and data aggregation
+                for (let i = 5; i >= 0; i--) {
+                    const d = new Date(today.getFullYear(), today.getMonth() - i, 1);
+                    monthsLabels.push(d.toLocaleString('ar-SA', { month: 'short', year: 'numeric' })); // e.g., "يونيو 2024"
+
+                    let monthIncome = 0;
+                    let monthExpenses = 0;
+                    transactions.filter(t => {
+                        const transactionDate = new Date(t.date);
+                        return transactionDate.getMonth() === d.getMonth() && transactionDate.getFullYear() === d.getFullYear();
+                    }).forEach(t => {
+                        if (t.type === 'income') monthIncome += t.amount;
+                        else monthExpenses += t.amount;
+                    });
+                    revenueData.push(monthIncome);
+                    expensesData.push(monthExpenses);
+                }
+
+                // Dashboard Revenue vs Expenses Chart
+                const ctx1 = document.getElementById('revenueExpensesChart');
+                if (ctx1) {
+                    dashboardRevenueExpensesChartInstance = new Chart(ctx1.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: monthsLabels,
+                            datasets: [{
+                                label: 'الإيرادات',
+                                data: revenueData,
+                                borderColor: appSettings.primaryDarkColor, // Use custom color
+                                backgroundColor: hexToRgba(appSettings.primaryDarkColor, 0.1), // Use custom color
+                                fill: true,
+                                tension: 0.3
+                            }, {
+                                label: 'المصروفات',
+                                data: expensesData,
+                                borderColor: appSettings.accentRedColor, // Use custom color
+                                backgroundColor: hexToRgba(appSettings.accentRedColor, 0.1), // Use custom color
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { font: { family: 'Cairo' } }
+                                },
+                                title: { display: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { callback: val => val.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol, font: { family: 'Cairo' } } },
+                                x: { ticks: { font: { family: 'Cairo' } } }
+                            }
+                        }
+                    });
+                }
+
+                // Dashboard Expenses by Category Chart (Current Month)
+                const todayForDashboardChart = new Date();
+                const currentMonthForChart = todayForDashboardChart.getMonth();
+                const currentYearForChart = todayForDashboardChart.getFullYear();
+
+                const currentMonthExpensesByCategory = {};
+                transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    return transactionDate.getMonth() === currentMonthForChart && transactionDate.getFullYear() === currentYearForChart && t.type === 'expense';
+                }).forEach(t => {
+                    currentMonthExpensesByCategory[t.category] = (currentMonthExpensesByCategory[t.category] || 0) + t.amount;
+                });
+                const expensesCategoryLabels = Object.keys(currentMonthExpensesByCategory);
+                const expensesCategoryValues = Object.values(currentMonthExpensesByCategory);
+
+                const ctx2 = document.getElementById('expensesByCategoryChart');
+                if (ctx2) {
+                    dashboardExpensesByCategoryChartInstance = new Chart(ctx2.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: expensesCategoryLabels,
+                            datasets: [{
+                                data: expensesCategoryValues,
+                                backgroundColor: [
+                                    appSettings.primaryDarkColor,
+                                    appSettings.accentRedColor,
+                                    '#4A6B8A', /* Fixed blue for consistent category visuals */
+                                    '#F7C566', /* Fixed gold for consistent category visuals */
+                                    appSettings.textLightColor,
+                                    '#800080' /* Purple */
+                                ],
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: { font: { family: 'Cairo' } }
+                                },
+                                title: { display: false }
+                            }
+                        }
+                    });
+                }
+            }
+
+
+            // --- Project Management Functions ---
+            function renderProjects() {
+                projectGrid.innerHTML = '';
+                if (projects.length === 0) {
+                    projectGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">لا توجد مشاريع لعرضها حاليًا. أضف مشروعاً جديداً!</p>';
+                    return;
+                }
+                projects.forEach(project => {
+                    const projectCard = document.createElement('div');
+                    projectCard.classList.add('project-card');
+                    projectCard.innerHTML = `
+                        <h4>${project.name}</h4>
+                        <span class="status ${project.status}">${getStatusText(project.status)}</span>
+                        <p>${project.description}</p>
+                        <div class="details">
+                            <span><strong>العميل:</strong> ${project.client}</span>
+                            <span><strong>الميزانية:</strong> ${project.budget.toLocaleString('ar-SA')} ${appSettings.currencySymbol}</span>
+                            <span><strong>تاريخ البدء:</strong> ${project.startDate}</span>
+                            <span><strong>تاريخ الانتهاء المتوقع:</strong> ${project.endDate || 'غير محدد'}</span>
+                            ${project.notes ? `<span><strong>ملاحظات:</strong> ${project.notes}</span>` : ''}
+                        </div>
+                        <div class="actions">
+                            <button class="edit-btn" data-id="${project.id}" data-type="project">تعديل</button>
+                            <button class="delete-btn" data-id="${project.id}" data-type="project">حذف</button>
+                        </div>
+                    `;
+                    projectGrid.appendChild(projectCard);
+                });
+
+                document.querySelectorAll('.project-card .edit-btn').forEach(button => {
+                    button.addEventListener('click', editProject);
+                });
+                document.querySelectorAll('.project-card .delete-btn').forEach(button => {
+                    button.addEventListener('click', deleteProject);
+                });
+            }
+
+            function getStatusText(status) {
+                switch (status) {
+                    case 'in-progress': return 'قيد التنفيذ';
+                    case 'completed': return 'مكتمل';
+                    case 'on-hold': return 'معلق';
+                    default: return status;
+                }
+            }
+
+            addNewProjectBtn.addEventListener('click', () => {
+                projectModalTitle.textContent = 'إضافة مشروع جديد';
+                projectForm.reset();
+                document.getElementById('projectId').value = '';
+                projectModal.style.display = 'flex';
+            });
+
+            closeProjectModalBtn.addEventListener('click', () => {
+                projectModal.style.display = 'none';
+            });
+            cancelProjectFormBtn.addEventListener('click', () => {
+                projectModal.style.display = 'none';
+            });
+
+            projectForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const id = document.getElementById('projectId').value;
+                const name = document.getElementById('projectName').value;
+                const description = document.getElementById('projectDescription').value;
+                const status = document.getElementById('projectStatus').value;
+                const client = document.getElementById('projectClient').value;
+                const budget = parseFloat(document.getElementById('projectBudget').value);
+                const startDate = document.getElementById('projectStartDate').value;
+                const endDate = document.getElementById('projectEndDate').value;
+                const notes = document.getElementById('projectNotes').value;
+
+                if (id) {
+                    const projectIndex = projects.findIndex(p => p.id === parseInt(id));
+                    if (projectIndex > -1) {
+                        projects[projectIndex] = { id: parseInt(id), name, description, status, client, budget, startDate, endDate, notes };
+                    }
+                } else {
+                    const newProject = {
+                        id: nextProjectId++,
+                        name, description, status, client, budget, startDate, endDate, notes
+                    };
+                    projects.push(newProject);
+                }
+                renderProjects();
+                projectModal.style.display = 'none';
+            });
+
+            function editProject(event) {
+                const projectId = parseInt(event.target.dataset.id);
+                const projectToEdit = projects.find(p => p.id === projectId);
+
+                if (projectToEdit) {
+                    projectModalTitle.textContent = 'تعديل المشروع';
+                    document.getElementById('projectId').value = projectToEdit.id;
+                    document.getElementById('projectName').value = projectToEdit.name;
+                    document.getElementById('projectDescription').value = projectToEdit.description;
+                    document.getElementById('projectStatus').value = projectToEdit.status;
+                    document.getElementById('projectClient').value = projectToEdit.client;
+                    document.getElementById('projectBudget').value = projectToEdit.budget;
+                    document.getElementById('projectStartDate').value = projectToEdit.startDate;
+                    document.getElementById('projectEndDate').value = projectToEdit.endDate;
+                    document.getElementById('projectNotes').value = projectToEdit.notes;
+                    projectModal.style.display = 'flex';
+                }
+            }
+
+            function deleteProject(event) {
+                const projectId = parseInt(event.target.dataset.id);
+                if (confirm('هل أنت متأكد أنك تريد حذف هذا المشروع؟')) {
+                    projects = projects.filter(p => p.id !== projectId);
+                    renderProjects();
+                }
+            }
+
+            // --- Clients & Suppliers Functions ---
+            function renderEntities() {
+                clientsSuppliersGrid.innerHTML = '';
+                if (entities.length === 0) {
+                    clientsSuppliersGrid.innerHTML = '<p style="text-align: center; color: var(--text-light);">لا توجد عملاء/موردون لعرضهم حاليًا. أضف واحداً جديداً!</p>';
+                    return;
+                }
+                entities.forEach(entity => {
+                    const entityCard = document.createElement('div');
+                    entityCard.classList.add('entity-card');
+                    entityCard.innerHTML = `
+                        <h4>${entity.name}</h4>
+                        <span class="type ${entity.type}">${getEntityTypeText(entity.type)}</span>
+                        <div class="details">
+                            ${entity.contactPerson ? `<span><strong>شخص الاتصال:</strong> ${entity.contactPerson}</span>` : ''}
+                            ${entity.email ? `<span><strong>البريد الإلكتروني:</strong> ${entity.email}</span>` : ''}
+                            ${entity.phone ? `<span><strong>رقم الهاتف:</strong> ${entity.phone}</span>` : ''}
+                            ${entity.address ? `<span><strong>العنوان:</strong> ${entity.address}</span>` : ''}
+                        </div>
+                        <div class="actions">
+                            <button class="edit-btn" data-id="${entity.id}" data-type="entity">تعديل</button>
+                            <button class="delete-btn" data-id="${entity.id}" data-type="entity">حذف</button>
+                        </div>
+                    `;
+                    clientsSuppliersGrid.appendChild(entityCard);
+                });
+
+                document.querySelectorAll('.entity-card .edit-btn').forEach(button => {
+                    button.addEventListener('click', editEntity);
+                });
+                document.querySelectorAll('.entity-card .delete-btn').forEach(button => {
+                    button.addEventListener('click', deleteEntity);
+                });
+            }
+
+            function getEntityTypeText(type) {
+                return type === 'client' ? 'عميل' : 'مورد';
+            }
+
+            addNewEntityBtn.addEventListener('click', () => {
+                entityModalTitle.textContent = 'إضافة عميل/مورد جديد';
+                entityForm.reset();
+                document.getElementById('entityId').value = '';
+                entityModal.style.display = 'flex';
+            });
+
+            closeEntityModalBtn.addEventListener('click', () => {
+                entityModal.style.display = 'none';
+            });
+            cancelEntityFormBtn.addEventListener('click', () => {
+                entityModal.style.display = 'none';
+            });
+
+            entityForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const id = document.getElementById('entityId').value;
+                const type = document.getElementById('entityType').value;
+                const name = document.getElementById('entityName').value;
+                const contactPerson = document.getElementById('entityContactPerson').value;
+                const email = document.getElementById('entityEmail').value;
+                const phone = document.getElementById('entityPhone').value;
+                const address = document.getElementById('entityAddress').value;
+
+                if (id) {
+                    const entityIndex = entities.findIndex(e => e.id === parseInt(id));
+                    if (entityIndex > -1) {
+                        entities[entityIndex] = { id: parseInt(id), type, name, contactPerson, email, phone, address };
+                    }
+                } else {
+                    const newEntity = {
+                        id: nextEntityId++,
+                        type, name, contactPerson, email, phone, address
+                    };
+                    entities.push(newEntity);
+                }
+                renderEntities();
+                entityModal.style.display = 'none';
+                // If clients are added/edited, update invoice form client dropdown
+                populateInvoiceClientSelect();
+                populatePurchaseSupplierSelect(); // if supplier is added/edited
+            });
+
+            function editEntity(event) {
+                const entityId = parseInt(event.target.dataset.id);
+                const entityToEdit = entities.find(e => e.id === entityId);
+
+                if (entityToEdit) {
+                    entityModalTitle.textContent = 'تعديل العميل/المورد';
+                    document.getElementById('entityId').value = entityToEdit.id;
+                    document.getElementById('entityType').value = entityToEdit.type;
+                    document.getElementById('entityName').value = entityToEdit.name;
+                    document.getElementById('entityContactPerson').value = entityToEdit.contactPerson;
+                    document.getElementById('entityEmail').value = entityToEdit.email;
+                    document.getElementById('entityPhone').value = entityToEdit.phone;
+                    document.getElementById('entityAddress').value = entityToEdit.address;
+                    entityModal.style.display = 'flex';
+                }
+            }
+
+            function deleteEntity(event) {
+                const entityId = parseInt(event.target.dataset.id);
+                if (confirm('هل أنت متأكد أنك تريد حذف هذا العميل/المورد؟')) {
+                    entities = entities.filter(e => e.id !== entityId);
+                    renderEntities();
+                    // If clients are removed, update invoice form client dropdown
+                    populateInvoiceClientSelect();
+                    populatePurchaseSupplierSelect(); // if supplier is removed
+                }
+            }
+
+            // --- Material Management Functions ---
+            function renderMaterials() {
+                materialsTableBody.innerHTML = '';
+                if (materials.length === 0) {
+                    materialsTableBody.innerHTML = '<tr><td colspan="4" style="text-align: center; color: var(--text-light);">لا توجد مواد لعرضها حاليًا. أضف مادة جديدة!</td></tr>';
+                    return;
+                }
+                materials.forEach(material => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${material.name}</td>
+                        <td>${material.quantity.toLocaleString('ar-SA')}</td>
+                        <td>${material.unitPrice.toLocaleString('ar-SA')} ${appSettings.currencySymbol}</td>
+                        <td class="actions">
+                            <button class="edit-btn" data-id="${material.id}">تعديل</button>
+                            <button class="delete-btn" data-id="${material.id}">حذف</button>
+                        </td>
+                    `;
+                    materialsTableBody.appendChild(row);
+                });
+
+                document.querySelectorAll('#materialsTableBody .edit-btn').forEach(button => {
+                    button.addEventListener('click', editMaterial);
+                });
+                document.querySelectorAll('#materialsTableBody .delete-btn').forEach(button => {
+                    button.addEventListener('click', deleteMaterial);
+                });
+            }
+
+            addNewMaterialBtn.addEventListener('click', () => {
+                materialModalTitle.textContent = 'إضافة مادة جديدة';
+                materialForm.reset();
+                document.getElementById('materialId').value = '';
+                materialModal.style.display = 'flex';
+            });
+
+            closeMaterialModalBtn.addEventListener('click', () => {
+                materialModal.style.display = 'none';
+            });
+            cancelMaterialFormBtn.addEventListener('click', () => {
+                materialModal.style.display = 'none';
+            });
+
+            materialForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const id = document.getElementById('materialId').value;
+                const name = document.getElementById('materialName').value;
+                const quantity = parseInt(document.getElementById('materialQuantity').value);
+                const unitPrice = parseFloat(document.getElementById('materialUnitPrice').value);
+
+                if (id) {
+                    const materialIndex = materials.findIndex(m => m.id === parseInt(id));
+                    if (materialIndex > -1) {
+                        materials[materialIndex] = { id: parseInt(id), name, quantity, unitPrice };
+                    }
+                } else {
+                    const newMaterial = {
+                        id: nextMaterialId++,
+                        name, quantity, unitPrice
+                    };
+                    materials.push(newMaterial);
+                }
+                renderMaterials();
+                materialModal.style.display = 'none';
+                // Update material options in invoice form and purchase form
+                populateInvoiceMaterialSelect(document.querySelector('.invoice-material-select')); // Pass the correct select element
+                populatePurchaseMaterialSelect();
+            });
+
+            function editMaterial(event) {
+                const materialId = parseInt(event.target.dataset.id);
+                const materialToEdit = materials.find(m => m.id === materialId);
+
+                if (materialToEdit) {
+                    materialModalTitle.textContent = 'تعديل المادة';
+                    document.getElementById('materialId').value = materialToEdit.id;
+                    document.getElementById('materialName').value = materialToEdit.name;
+                    document.getElementById('materialQuantity').value = materialToEdit.quantity;
+                    document.getElementById('materialUnitPrice').value = materialToEdit.unitPrice;
+                    materialModal.style.display = 'flex';
+                }
+            }
+
+            function deleteMaterial(event) {
+                const materialId = parseInt(event.target.dataset.id);
+                if (confirm('هل أنت متأكد أنك تريد حذف هذه المادة؟')) {
+                    materials = materials.filter(m => m.id !== materialId);
+                    renderMaterials();
+                    // Update material options in invoice form and purchase form
+                    populateInvoiceMaterialSelect(document.querySelector('.invoice-material-select'));
+                    populatePurchaseMaterialSelect();
+                }
+            }
+
+            // --- Invoice Creation Functions ---
+            function renderInvoiceForm() {
+                populateInvoiceClientSelect();
+                // Set default invoice date to today
+                invoiceDateInput.value = new Date().toISOString().slice(0, 10);
+                invoiceItemsContainer.innerHTML = ''; // Clear previous items
+                invoiceItemCounter = 0; // Reset item counter
+                addInvoiceItem(); // Add first empty item row
+                calculateInvoiceTotal(); // Calculate initial total (should be 0)
+            }
+
+            function populateInvoiceClientSelect() {
+                invoiceClientSelect.innerHTML = '<option value="">اختر عميل...</option>';
+                entities.filter(e => e.type === 'client').forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = client.name;
+                    invoiceClientSelect.appendChild(option);
+                });
+            }
+
+            function populateInvoiceMaterialSelect(selectElement) {
+                selectElement.innerHTML = '<option value="">اختر مادة...</option>';
+                materials.forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.id;
+                    option.textContent = `${material.name} (متوفر: ${material.quantity.toLocaleString('ar-SA')})`;
+                    option.dataset.unitPrice = material.unitPrice; // Store unit price for calculation
+                    option.dataset.availableQuantity = material.quantity; // Store available quantity
+                    selectElement.appendChild(option);
+                });
+            }
+
+            function addInvoiceItem() {
+                invoiceItemCounter++;
+                const itemRow = document.createElement('div');
+                itemRow.classList.add('invoice-item-row');
+                itemRow.dataset.itemId = invoiceItemCounter;
+
+                itemRow.innerHTML = `
+                    <div class="form-group">
+                        <label>المادة:</label>
+                        <select class="invoice-material-select" data-item-id="${invoiceItemCounter}" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>الكمية:</label>
+                        <input type="number" class="invoice-quantity-input" data-item-id="${invoiceItemCounter}" value="1" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>سعر الوحدة:</label>
+                        <input type="number" class="invoice-unit-price-display" data-item-id="${invoiceItemCounter}" value="0" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>الإجمالي الفرعي:</label>
+                        <input type="number" class="invoice-subtotal-display" data-item-id="${invoiceItemCounter}" value="0" readonly>
+                    </div>
+                    <div class="form-group" style="padding-top: 15px;">
+                        <button type="button" class="item-action-btn remove-item" data-item-id="${invoiceItemCounter}">حذف</button>
+                    </div>
+                `;
+                invoiceItemsContainer.appendChild(itemRow);
+
+                const materialSelect = itemRow.querySelector('.invoice-material-select');
+                const quantityInput = itemRow.querySelector('.invoice-quantity-input');
+                const unitPriceDisplay = itemRow.querySelector('.invoice-unit-price-display');
+                // const subtotalDisplay = itemRow.querySelector('.invoice-subtotal-display'); // Not needed directly here
+                const removeButton = itemRow.querySelector('.remove-item');
+
+                populateInvoiceMaterialSelect(materialSelect); // Populate dropdown with current materials
+
+                materialSelect.addEventListener('change', () => {
+                    const selectedOption = materialSelect.options[materialSelect.selectedIndex];
+                    const unitPrice = parseFloat(selectedOption.dataset.unitPrice || 0);
+                    const availableQuantity = parseInt(selectedOption.dataset.availableQuantity || 0);
+
+                    unitPriceDisplay.value = unitPrice;
+                    quantityInput.max = availableQuantity; // Set max quantity based on available stock
+                    if (parseInt(quantityInput.value) > availableQuantity) {
+                         quantityInput.value = availableQuantity; // Adjust quantity if it exceeds available
+                    }
+                    if (availableQuantity === 0 && materialSelect.value !== "") { // Warn only if a material is actually selected
+                        alert('هذه المادة غير متوفرة في المخزون حاليًا. يرجى شراء المزيد أو اختيار مادة أخرى.');
+                        // materialSelect.value = ""; // Reset selection
+                        // unitPriceDisplay.value = 0;
+                        // quantityInput.value = 0;
+                    }
+                    calculateItemSubtotal(itemRow);
+                    calculateInvoiceTotal();
+                });
+
+                quantityInput.addEventListener('input', () => {
+                    const selectedOption = materialSelect.options[materialSelect.selectedIndex];
+                    const availableQuantity = parseInt(selectedOption.dataset.availableQuantity || 0);
+                    const currentQuantity = parseInt(quantityInput.value);
+
+                    if (currentQuantity < 0) quantityInput.value = 0; // Prevent negative quantity
+
+                    if (currentQuantity > availableQuantity && materialSelect.value !== "") {
+                        alert(`الكمية المطلوبة من ${materialName} (${currentQuantity}) أكبر من المتوفرة في المخزون (${availableQuantity}).`);
+                        quantityInput.value = availableQuantity;
+                    }
+                    calculateItemSubtotal(itemRow);
+                    calculateInvoiceTotal();
+                });
+
+                removeButton.addEventListener('click', () => {
+                    itemRow.remove();
+                    calculateInvoiceTotal();
+                });
+            }
+
+            function calculateItemSubtotal(itemRow) {
+                const quantity = parseFloat(itemRow.querySelector('.invoice-quantity-input').value) || 0;
+                const unitPrice = parseFloat(itemRow.querySelector('.invoice-unit-price-display').value) || 0;
+                const subtotal = quantity * unitPrice;
+                itemRow.querySelector('.invoice-subtotal-display').value = subtotal.toFixed(2);
+            }
+
+            function calculateInvoiceTotal() {
+                let grandTotal = 0;
+                document.querySelectorAll('.invoice-subtotal-display').forEach(subtotalInput => {
+                    grandTotal += parseFloat(subtotalInput.value) || 0;
+                });
+                invoiceGrandTotalDisplay.textContent = `${grandTotal.toLocaleString('ar-SA')} ${appSettings.currencySymbol}`;
+            }
+
+            addInvoiceItemBtn.addEventListener('click', addInvoiceItem);
+
+
+            invoiceForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const clientId = invoiceClientSelect.value;
+                const clientName = invoiceClientSelect.options[invoiceClientSelect.selectedIndex].textContent;
+                const invoiceDate = invoiceDateInput.value;
+                let invoiceTotalAmount = 0;
+                
+                const invoiceItems = [];
+                let hasErrors = false;
+
+                document.querySelectorAll('.invoice-item-row').forEach(itemRow => {
+                    const materialSelect = itemRow.querySelector('.invoice-material-select');
+                    const quantityInput = itemRow.querySelector('.invoice-quantity-input');
+                    const unitPriceDisplay = itemRow.querySelector('.invoice-unit-price-display');
+
+                    const materialId = materialSelect.value;
+                    const materialName = materialSelect.options[materialSelect.selectedIndex].textContent.split(' (')[0];
+                    const quantity = parseInt(quantityInput.value);
+                    const unitPrice = parseFloat(unitPriceDisplay.value);
+                    const subtotal = quantity * unitPrice;
+
+                    if (!materialId || quantity <= 0 || isNaN(quantity) || isNaN(unitPrice)) {
+                        // Allow empty rows if it's not the only row or if other rows have valid data
+                        if (invoiceItemsContainer.children.length === 1 && (!materialId && quantity === 0)) {
+                             // This handles the initial empty row being submitted, prevents error if no items
+                        } else if (materialId || quantity > 0) { // Only show error if an attempt was made to fill it
+                            alert('يرجى ملء جميع حقول بنود الفاتورة بشكل صحيح أو حذف البنود الفارغة.');
+                            hasErrors = true;
+                            return;
+                        }
+                    } else {
+                        const selectedMaterial = materials.find(m => m.id === parseInt(materialId));
+                        if (selectedMaterial && quantity > selectedMaterial.quantity) {
+                             alert(`الكمية المطلوبة من ${materialName} (${quantity}) أكبر من المتوفرة في المخزون (${selectedMaterial.quantity}).`);
+                             hasErrors = true;
+                             return;
+                        }
+                        invoiceItems.push({
+                            materialId: parseInt(materialId), materialName, quantity, unitPrice, subtotal
+                        });
+                        invoiceTotalAmount += subtotal;
+                    }
+                });
+
+                if (hasErrors) return;
+                if (invoiceItems.length === 0) {
+                    alert('لا يمكن إصدار فاتورة بدون بنود.');
+                    return;
+                }
+                if (invoiceTotalAmount === 0) {
+                     alert('إجمالي الفاتورة لا يمكن أن يكون صفرًا.');
+                     return;
+                }
+
+                if (confirm(`هل أنت متأكد من إصدار فاتورة بقيمة ${invoiceTotalAmount.toLocaleString('ar-SA')} ${appSettings.currencySymbol} للعميل ${clientName}؟`)) {
+                    // 1. Decrease material quantities
+                    invoiceItems.forEach(item => {
+                        const material = materials.find(m => m.id === item.materialId);
+                        if (material) {
+                            material.quantity -= item.quantity;
+                        }
+                    });
+
+                    // 2. Add as an income transaction
+                    const newInvoiceTransaction = {
+                        id: nextTransactionId++,
+                        date: invoiceDate,
+                        description: `فاتورة مبيعات للعميل ${clientName} (#${transactions.length + 1})`,
+                        type: 'income',
+                        category: 'مبيعات مواد',
+                        amount: invoiceTotalAmount
+                    };
+                    transactions.push(newInvoiceTransaction);
+
+                    // 3. Generate and download PDF
+                    generateInvoicePdf({
+                        invoiceNumber: transactions.length, // Simple invoice number for demo
+                        clientName: clientName,
+                        invoiceDate: invoiceDate,
+                        items: invoiceItems,
+                        grandTotal: invoiceTotalAmount
+                    });
+
+                    alert('تم إصدار الفاتورة بنجاح وتحديث المخزون وسجل المعاملات!');
+                    invoiceForm.reset();
+                    renderMaterials(); // Update materials table
+                    renderInvoiceForm(); // Reset invoice form and refresh material stock in dropdowns
+                    renderTransactions(); // Update transactions table
+                    initializeDashboardContent(); // Refresh dashboard
+                }
+            });
+
+            // --- Generate Invoice PDF Function ---
+            async function generateInvoicePdf(invoiceData) {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF('p', 'pt', 'a4'); // 'p' for portrait, 'pt' for points, 'a4' for A4 size
+
+                // Prepare HTML content for PDF
+                const invoiceHtml = `
+                    <div style="font-family: 'Cairo', sans-serif; direction: rtl; text-align: right; padding: 20px; color: ${appSettings.textDarkColor}; width: 700px; box-sizing: border-box;">
+                        <h2 style="text-align: center; color: ${appSettings.primaryDarkColor}; border-bottom: 2px solid ${appSettings.accentRedColor}; padding-bottom: 10px; margin-bottom: 20px;">
+                            ${appSettings.companyName}
+                        </h2>
+                        <table style="width: 100%; margin-bottom: 20px; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>رقم الفاتورة:</strong> INV-${invoiceData.invoiceNumber}</td>
+                                <td style="padding: 5px 0;"><strong>التاريخ:</strong> ${invoiceData.invoiceDate}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>العميل:</strong> ${invoiceData.clientName}</td>
+                                <td style="padding: 5px 0;"><strong>البريد الإلكتروني:</strong> ${appSettings.defaultEmail}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 5px 0;"><strong>هاتف الشركة:</strong> ${appSettings.companyPhone || 'غير متوفر'}</td>
+                                <td style="padding: 5px 0;"><strong>عنوان الشركة:</strong> ${appSettings.companyAddress || 'غير متوفر'}</td>
+                            </tr>
+                        </table>
+
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+                            <thead>
+                                <tr style="background-color: ${appSettings.lightGreyColor}; color: ${appSettings.textDarkColor}; font-weight: 600;">
+                                    <th style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">المادة</th>
+                                    <th style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">الكمية</th>
+                                    <th style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">سعر الوحدة</th>
+                                    <th style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">الإجمالي الفرعي</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${invoiceData.items.map(item => `
+                                    <tr>
+                                        <td style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">${item.materialName}</td>
+                                        <td style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">${item.quantity.toLocaleString('ar-SA')}</td>
+                                        <td style="1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">${item.unitPrice.toLocaleString('ar-SA')} ${appSettings.currencySymbol}</td>
+                                        <td style="border: 1px solid ${appSettings.mediumGreyColor}; padding: 8px; text-align: right;">${item.subtotal.toLocaleString('ar-SA')} ${appSettings.currencySymbol}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+
+                        <div style="text-align: left; font-size: 18px; font-weight: 700; color: ${appSettings.primaryDarkColor}; margin-top: 30px; padding-top: 15px; border-top: 2px solid ${appSettings.primaryDarkColor};">
+                            الإجمالي الكلي: <span style="color: ${appSettings.accentRedColor}; margin-left: 10px;">${invoiceData.grandTotal.toLocaleString('ar-SA')} ${appSettings.currencySymbol}</span>
+                        </div>
+
+                        <div style="text-align: center; font-size: 12px; color: ${appSettings.textLightColor}; margin-top: 40px;">
+                            شكرا لتعاملك معنا!
+                        </div>
+                    </div>
+                `;
+
+                // Set the HTML content to the hidden div
+                invoicePdfContent.innerHTML = invoiceHtml;
+
+                // Use html2canvas to render the hidden div as an image
+                const canvas = await html2canvas(invoicePdfContent, {
+                    scale: 2, // Higher scale for better quality
+                    useCORS: true // Required if you load external images/fonts
+                });
+
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = 595.28; // A4 width in pt (210mm)
+                const pageHeight = 841.89; // A4 height in pt (297mm)
+                const imgHeight = canvas.height * imgWidth / canvas.width;
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                // Add image to PDF
+                doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pageHeight;
+
+                while (heightLeft >= 0) {
+                    position = heightLeft - imgHeight;
+                    doc.addPage();
+                    doc.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pageHeight;
+                }
+
+                doc.save(`فاتورة_${invoiceData.clientName}_${invoiceData.invoiceDate}.pdf`);
+
+                // Clear the hidden div after generation
+                invoicePdfContent.innerHTML = '';
+            }
+
+
+            // --- Expenses & Income Functions ---
+            function renderTransactions() {
+                transactionsTableBody.innerHTML = ''; // Clear existing rows
+                let totalIncome = 0;
+                let totalExpenses = 0;
+
+                // Sort transactions by date descending (most recent first)
+                transactions.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+
+                if (transactions.length === 0) {
+                    transactionsTableBody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: var(--text-light);">لا توجد معاملات لعرضها حاليًا. أضف معاملة جديدة!</td></tr>';
+                }
+
+                transactions.forEach(transaction => {
+                    const row = document.createElement('tr');
+                    const amountClass = transaction.type === 'income' ? 'income' : 'expense';
+                    const amountSign = transaction.type === 'income' ? '' : '-'; // No plus sign for income for cleaner look
+
+                    if (transaction.type === 'income') {
+                        totalIncome += transaction.amount;
+                    } else {
+                        totalExpenses += transaction.amount;
+                    }
+
+                    row.innerHTML = `
+                        <td>${transaction.date}</td>
+                        <td>${transaction.description}</td>
+                        <td>${getTransactionTypeText(transaction.type)}</td>
+                        <td>${transaction.category}</td>
+                        <td class="amount ${amountClass}">${amountSign}${transaction.amount.toLocaleString('ar-SA')} ${appSettings.currencySymbol}</td>
+                        <td class="actions">
+                            <button class="edit-btn" data-id="${transaction.id}" data-type="transaction">تعديل</button>
+                            <button class="delete-btn" data-id="${transaction.id}" data-type="transaction">حذف</button>
+                        </td>
+                    `;
+                    transactionsTableBody.appendChild(row);
+                });
+
+                totalIncomeDisplay.textContent = totalIncome.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol;
+                totalExpensesDisplay.textContent = totalExpenses.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol;
+                netBalanceDisplay.textContent = (totalIncome - totalExpenses).toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol;
+
+                // Add event listeners for edit and delete buttons in the table
+                document.querySelectorAll('#transactionsTableBody .edit-btn').forEach(button => {
+                    button.addEventListener('click', editTransaction);
+                });
+                document.querySelectorAll('#transactionsTableBody .delete-btn').forEach(button => {
+                    button.addEventListener('click', deleteTransaction);
+                });
+            }
+
+            function getTransactionTypeText(type) {
+                return type === 'income' ? 'إيراد' : 'مصروف';
+            }
+
+            // Standard Transaction
+            addNewTransactionBtn.addEventListener('click', () => {
+                transactionModalTitle.textContent = 'إضافة معاملة جديدة';
+                transactionForm.reset();
+                document.getElementById('transactionId').value = '';
+                document.getElementById('transactionDate').value = new Date().toISOString().slice(0, 10);
+                transactionModal.style.display = 'flex';
+            });
+
+            closeTransactionModalBtn.addEventListener('click', () => {
+                transactionModal.style.display = 'none';
+            });
+            cancelTransactionFormBtn.addEventListener('click', () => {
+                transactionModal.style.display = 'none';
+            });
+
+            transactionForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const id = document.getElementById('transactionId').value;
+                const date = document.getElementById('transactionDate').value;
+                const description = document.getElementById('transactionDescription').value;
+                const type = document.getElementById('transactionType').value;
+                const category = document.getElementById('transactionCategory').value;
+                const amount = parseFloat(document.getElementById('transactionAmount').value);
+
+                if (id) {
+                    const transactionIndex = transactions.findIndex(t => t.id === parseInt(id));
+                    if (transactionIndex > -1) {
+                        transactions[transactionIndex] = { id: parseInt(id), date, description, type, category, amount };
+                    }
+                } else {
+                    const newTransaction = {
+                        id: nextTransactionId++,
+                        date, description, type, category, amount
+                    };
+                    transactions.push(newTransaction);
+                }
+                renderTransactions();
+                transactionModal.style.display = 'none';
+                initializeDashboardContent();
+                if (document.getElementById('financial-reports').classList.contains('active')) {
+                    initializeFinancialReportsCharts();
+                }
+            });
+
+            function editTransaction(event) {
+                const transactionId = parseInt(event.target.dataset.id);
+                const transactionToEdit = transactions.find(t => t.id === transactionId);
+
+                if (transactionToEdit) {
+                    transactionModalTitle.textContent = 'تعديل المعاملة';
+                    document.getElementById('transactionId').value = transactionToEdit.id;
+                    document.getElementById('transactionDate').value = transactionToEdit.date;
+                    document.getElementById('transactionDescription').value = transactionToEdit.description;
+                    document.getElementById('transactionType').value = transactionToEdit.type;
+                    document.getElementById('transactionCategory').value = transactionToEdit.category;
+                    document.getElementById('transactionAmount').value = transactionToEdit.amount;
+                    transactionModal.style.display = 'flex';
+                }
+            }
+
+            function deleteTransaction(event) {
+                const transactionId = parseInt(event.target.dataset.id);
+                if (confirm('هل أنت متأكد أنك تريد حذف هذه المعاملة؟')) {
+                    transactions = transactions.filter(t => t.id !== transactionId);
+                    renderTransactions();
+                    initializeDashboardContent();
+                    if (document.getElementById('financial-reports').classList.contains('active')) {
+                        initializeFinancialReportsCharts();
+                    }
+                }
+            }
+
+            // Material Purchase Transaction
+            addMaterialPurchaseBtn.addEventListener('click', () => {
+                populatePurchaseMaterialSelect();
+                populatePurchaseSupplierSelect();
+                document.getElementById('purchaseDate').value = new Date().toISOString().slice(0, 10);
+                materialPurchaseForm.reset();
+                materialPurchaseModal.style.display = 'flex';
+            });
+
+            closeMaterialPurchaseModalBtn.addEventListener('click', () => {
+                materialPurchaseModal.style.display = 'none';
+            });
+            cancelMaterialPurchaseFormBtn.addEventListener('click', () => {
+                materialPurchaseModal.style.display = 'none';
+            });
+
+            function populatePurchaseMaterialSelect() {
+                purchaseMaterialSelect.innerHTML = '<option value="">اختر مادة...</option>';
+                materials.forEach(material => {
+                    const option = document.createElement('option');
+                    option.value = material.id;
+                    option.textContent = material.name;
+                    purchaseMaterialSelect.appendChild(option);
+                });
+            }
+
+            function populatePurchaseSupplierSelect() {
+                purchaseSupplierSelect.innerHTML = '<option value="">اختر مورد...</option>';
+                entities.filter(e => e.type === 'supplier').forEach(supplier => {
+                    const option = document.createElement('option');
+                    option.value = supplier.id;
+                    option.textContent = supplier.name;
+                    purchaseSupplierSelect.appendChild(option);
+                });
+            }
+
+            materialPurchaseForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const materialId = parseInt(document.getElementById('purchaseMaterial').value);
+                const quantity = parseInt(document.getElementById('purchaseQuantity').value);
+                const purchaseDate = document.getElementById('purchaseDate').value;
+                const supplierId = parseInt(document.getElementById('purchaseSupplier').value);
+                const supplierName = document.getElementById('purchaseSupplier').options[document.getElementById('purchaseSupplier').selectedIndex].textContent;
+
+                const material = materials.find(m => m.id === materialId);
+                if (!material) {
+                    alert('يرجى اختيار مادة صالحة.');
+                    return;
+                }
+                
+                const purchaseCost = quantity * material.unitPrice;
+
+                if (confirm(`هل أنت متأكد من تسجيل شراء ${quantity} من ${material.name} بقيمة ${purchaseCost.toLocaleString('ar-SA')} ${appSettings.currencySymbol} من المورد ${supplierName}؟`)) {
+                    // Increase material quantity
+                    material.quantity += quantity;
+
+                    // Add as an expense transaction
+                    const newPurchaseTransaction = {
+                        id: nextTransactionId++,
+                        date: purchaseDate,
+                        description: `شراء ${quantity} من ${material.name} من ${supplierName}`,
+                        type: 'expense',
+                        category: 'مواد بناء', // Assuming material purchases are always 'مواد بناء'
+                        amount: purchaseCost
+                    };
+                    transactions.push(newPurchaseTransaction);
+
+                    alert('تم تسجيل الشراء بنجاح وتحديث المخزون وسجل المعاملات!');
+                    materialPurchaseModal.style.display = 'none';
+                    renderMaterials(); // Refresh materials table to show updated quantity
+                    renderTransactions(); // Refresh transactions table
+                    initializeDashboardContent(); // Refresh dashboard
+                }
+            });
+
+
+            // --- Financial Reports Charts (Dynamically Linked to Transactions Data) ---
+            applyReportFilterBtn.addEventListener('click', initializeFinancialReportsCharts);
+
+            function populateReportYearFilter() {
+                const currentYear = new Date().getFullYear();
+                let earliestYear = currentYear;
+                if (transactions.length > 0) {
+                     earliestYear = Math.min(...transactions.map(t => new Date(t.date).getFullYear()));
+                }
+
+                reportYearSelect.innerHTML = ''; // Clear existing options
+
+                // Add "All Years" option
+                let optionAll = document.createElement('option');
+                optionAll.value = 'all';
+                optionAll.textContent = 'كل السنوات';
+                reportYearSelect.appendChild(optionAll);
+
+                // Add options for relevant years
+                for (let year = earliestYear; year <= currentYear + 1; year++) {
+                    let option = document.createElement('option');
+                    option.value = year.toString();
+                    option.textContent = year.toString();
+                    reportYearSelect.appendChild(option);
+                }
+                reportYearSelect.value = currentYear.toString(); // Default to current year
+            }
+
+
+            function initializeFinancialReportsCharts() {
+                if (cashFlowChartInstance) cashFlowChartInstance.destroy();
+                if (profitLossChartInstance) profitLossChartInstance.destroy();
+                if (revenueByCategoriesChartInstance) revenueByCategoriesChartInstance.destroy();
+                if (expensesByCategoriesReportChartInstance) expensesByCategoriesReportChartInstance.destroy();
+
+
+                // Get filter values
+                const selectedYear = reportYearSelect.value;
+                const fromDate = reportFromDateInput.value;
+                const toDate = reportToDateInput.value;
+
+                // Filter transactions based on selected date range/year
+                const filteredTransactions = transactions.filter(t => {
+                    const transactionDate = new Date(t.date);
+                    if (selectedYear && selectedYear !== 'all') {
+                        return transactionDate.getFullYear() === parseInt(selectedYear);
+                    }
+                    if (fromDate && toDate) {
+                        const start = new Date(fromDate);
+                        const end = new Date(toDate);
+                        return transactionDate >= start && transactionDate <= end;
+                    }
+                    if (fromDate) {
+                        const start = new Date(fromDate);
+                        return transactionDate >= start;
+                    }
+                    if (toDate) {
+                        const end = new Date(toDate);
+                        return transactionDate <= end;
+                    }
+                    return true; // No filter applied
+                });
+
+                // --- Prepare data for each chart from filteredTransactions ---
+
+                // 1. Cash Flow Chart Data (Monthly for filtered period)
+                const cashFlowData = {};
+                filteredTransactions.forEach(t => {
+                    const month = t.date.substring(0, 7);
+                    if (!cashFlowData[month]) {
+                        cashFlowData[month] = { income: 0, expense: 0 };
+                    }
+                    if (t.type === 'income') {
+                        cashFlowData[month].income += t.amount;
+                    } else {
+                        cashFlowData[month].expense += t.amount;
+                    }
+                });
+                const sortedMonths = Object.keys(cashFlowData).sort();
+                const cashFlowLabels = sortedMonths.map(m => new Date(m).toLocaleString('ar-SA', { month: 'long', year: 'numeric' }));
+                const cashInflow = sortedMonths.map(m => cashFlowData[m].income);
+                const cashOutflow = sortedMonths.map(m => cashFlowData[m].expense);
+
+                // 2. Profit & Loss Chart Data (Aggregated for filtered period)
+                let totalIncomeForPL = 0;
+                let totalExpenseForPL = 0;
+                filteredTransactions.forEach(t => {
+                    if (t.type === 'income') totalIncomeForPL += t.amount;
+                    else totalExpenseForPL += t.amount;
+                });
+                const profitLossLabels = ['إجمالي الإيرادات', 'إجمالي المصروفات', 'صافي الربح/الخسارة'];
+                const profitLossValues = [totalIncomeForPL, totalExpenseForPL, totalIncomeForPL - totalExpenseForPL];
+                const profitLossColors = ['#2e7d32', appSettings.accentRedColor, (totalIncomeForPL - totalExpenseForPL) >= 0 ? '#007bff' : appSettings.accentRedColor];
+
+                // 3. Revenue by Category Chart (Pie chart for income categories)
+                const revenueByCategoryData = {};
+                filteredTransactions.filter(t => t.type === 'income').forEach(t => {
+                    revenueByCategoryData[t.category] = (revenueByCategoryData[t.category] || 0) + t.amount;
+                });
+                const revenueCategoriesLabels = Object.keys(revenueByCategoryData);
+                const revenueCategoriesValues = Object.values(revenueByCategoryData);
+
+                // 4. Expenses by Category Chart (Pie chart for expense categories)
+                const expensesByCategoryData = {};
+                filteredTransactions.filter(t => t.type === 'expense').forEach(t => {
+                    expensesByCategoryData[t.category] = (expensesByCategoryData[t.category] || 0) + t.amount;
+                });
+                const expenseCategoriesLabels = Object.keys(expensesByCategoryData);
+                const expenseCategoriesValues = Object.values(expensesByCategoryData);
+
+                // Update chart titles
+                let filterDescription = '';
+                if (selectedYear && selectedYear !== 'all') {
+                    filterDescription = `للعام ${selectedYear}`;
+                } else if (fromDate && toDate) {
+                    filterDescription = `من ${fromDate} إلى ${toDate}`;
+                } else if (fromDate) {
+                    filterDescription = `من تاريخ ${fromDate}`;
+                } else if (toDate) {
+                    filterDescription = `حتى تاريخ ${toDate}`;
+                } else {
+                    filterDescription = `(كل البيانات)`;
+                }
+                cashFlowChartTitle.textContent = `التدفقات النقدية ${filterDescription}`;
+                profitLossChartTitle.textContent = `الربح والخسارة ${filterDescription}`;
+                revenueByProjectChartTitle.textContent = `توزيع الإيرادات حسب الفئة ${filterDescription}`;
+                expensesByCategoryChartTitle.textContent = `توزيع المصروفات حسب الفئة ${filterDescription}`;
+
+
+                // Cash Flow Chart
+                const cashFlowCtx = document.getElementById('cashFlowChart');
+                if (cashFlowCtx) {
+                    cashFlowChartInstance = new Chart(cashFlowCtx.getContext('2d'), {
+                        type: 'line',
+                        data: {
+                            labels: cashFlowLabels,
+                            datasets: [{
+                                label: 'التدفقات النقدية الداخلة',
+                                data: cashInflow,
+                                borderColor: '#2e7d32',
+                                backgroundColor: 'rgba(46, 125, 50, 0.1)',
+                                fill: true,
+                                tension: 0.3
+                            }, {
+                                label: 'التدفقات النقدية الخارجة',
+                                data: cashOutflow,
+                                borderColor: appSettings.accentRedColor,
+                                backgroundColor: hexToRgba(appSettings.accentRedColor, 0.1),
+                                fill: true,
+                                tension: 0.3
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { font: { family: 'Cairo' } } },
+                                title: { display: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { callback: val => val.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol, font: { family: 'Cairo' } } },
+                                x: { ticks: { font: { family: 'Cairo' } } }
+                            }
+                        }
+                    });
+                }
+
+                // Profit & Loss Chart
+                const profitLossCtx = document.getElementById('profitLossChart');
+                if (profitLossCtx) {
+                    profitLossChartInstance = new Chart(profitLossCtx.getContext('2d'), {
+                        type: 'bar',
+                        data: {
+                            labels: profitLossLabels,
+                            datasets: [{
+                                label: 'المبالغ',
+                                data: profitLossValues,
+                                backgroundColor: profitLossColors
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { display: false },
+                                title: { display: false }
+                            },
+                            scales: {
+                                y: { beginAtZero: true, ticks: { callback: val => val.toLocaleString('ar-SA') + ' ' + appSettings.currencySymbol, font: { family: 'Cairo' } } },
+                                x: { ticks: { font: { family: 'Cairo' } } }
+                            }
+                        }
+                    });
+                }
+
+                // Revenue by Category Chart
+                const revenueByProjectCtx = document.getElementById('revenueByProjectChart');
+                if (revenueByProjectCtx) {
+                    revenueByCategoriesChartInstance = new Chart(revenueByProjectCtx.getContext('2d'), {
+                        type: 'pie',
+                        data: {
+                            labels: revenueCategoriesLabels,
+                            datasets: [{
+                                data: revenueCategoriesValues,
+                                backgroundColor: [
+                                    appSettings.primaryDarkColor,
+                                    appSettings.accentRedColor,
+                                    '#4A6B8A',
+                                    '#F7C566',
+                                    '#A9A9A9',
+                                    '#7B68EE'
+                                ],
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { font: { family: 'Cairo' } } },
+                                title: { display: false }
+                            }
+                        }
+                    });
+                }
+
+                // Expenses by Category Chart (Report Page)
+                const expensesByCategoryReportCtx = document.getElementById('expensesByCategoryChart');
+                if (expensesByCategoryReportCtx) {
+                    expensesByCategoriesReportChartInstance = new Chart(expensesByCategoryReportCtx.getContext('2d'), {
+                        type: 'doughnut',
+                        data: {
+                            labels: expenseCategoriesLabels,
+                            datasets: [{
+                                data: expenseCategoriesValues,
+                                backgroundColor: [
+                                    appSettings.accentRedColor,
+                                    appSettings.primaryDarkColor,
+                                    '#A9A9A9',
+                                    '#F7C566',
+                                    '#4A6B8A',
+                                    '#CD5C5C'
+                                ],
+                                hoverOffset: 4
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            plugins: {
+                                legend: { position: 'bottom', labels: { font: { family: 'Cairo' } } },
+                                title: { display: false }
+                            }
+                        }
+                    });
+                }
+            }
+
+
+            // --- User Management Functions ---
+            function renderUsers() {
+                usersTableBody.innerHTML = '';
+                if (users.length === 0) {
+                    usersTableBody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-light);">لا توجد مستخدمون لعرضهم حاليًا. أضف مستخدماً جديداً!</td></tr>';
+                    return;
+                }
+                users.forEach(user => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${getUserRoleText(user.role)}</td>
+                        <td>${user.lastActivity || 'غير معروف'}</td>
+                        <td class="actions">
+                            <button class="edit-btn" data-id="${user.id}">تعديل</button>
+                            <button class="delete-btn" data-id="${user.id}">حذف</button>
+                        </td>
+                    `;
+                    usersTableBody.appendChild(row);
+                });
+
+                document.querySelectorAll('.users-table .edit-btn').forEach(button => {
+                    button.addEventListener('click', editUser);
+                });
+                document.querySelectorAll('.users-table .delete-btn').forEach(button => {
+                    button.addEventListener('click', deleteUser);
+                });
+            }
+
+            function getUserRoleText(role) {
+                switch (role) {
+                    case 'admin': return 'مدير';
+                    case 'accountant': return 'محاسب';
+                    case 'project_manager': return 'مدير مشاريع';
+                    case 'viewer': return 'مشاهد';
+                    default: return role;
+                }
+            }
+
+            addNewUserBtn.addEventListener('click', () => {
+                userModalTitle.textContent = 'إضافة مستخدم جديد';
+                userForm.reset();
+                document.getElementById('userId').value = '';
+                document.getElementById('userPassword').required = true; // Password required for new user
+                userModal.style.display = 'flex';
+            });
+
+            closeUserModalBtn.addEventListener('click', () => {
+                userModal.style.display = 'none';
+            });
+            cancelUserFormBtn.addEventListener('click', () => {
+                userModal.style.display = 'none';
+            });
+
+            userForm.addEventListener('submit', (event) => {
+                event.preventDefault();
+
+                const id = document.getElementById('userId').value;
+                const name = document.getElementById('userName').value;
+                const email = document.getElementById('userEmail').value;
+                const role = document.getElementById('userRole').value;
+                const password = document.getElementById('userPassword').value; // In a real app, this would be hashed
+
+                if (id) {
+                    // Edit existing user
+                    const userIndex = users.findIndex(u => u.id === parseInt(id));
+                    if (userIndex > -1) {
+                        users[userIndex].name = name;
+                        users[userIndex].email = email;
+                        users[userIndex].role = role;
+                        // In a real app, you'd handle password update securely
+                        // For this demo, we just update name/email/role
+                    }
+                } else {
+                    // Add new user
+                    const newUser = {
+                        id: nextUserId++,
+                        name, email, role,
+                        lastActivity: new Date().toISOString().slice(0, 10)
+                        // In a real app, store hashed password, not plain text
+                    };
+                    users.push(newUser);
+                }
+                renderUsers();
+                userModal.style.display = 'none';
+            });
+
+            function editUser(event) {
+                const userId = parseInt(event.target.dataset.id);
+                const userToEdit = users.find(u => u.id === userId);
+
+                if (userToEdit) {
+                    userModalTitle.textContent = 'تعديل المستخدم';
+                    document.getElementById('userId').value = userToEdit.id;
+                    document.getElementById('userName').value = userToEdit.name;
+                    document.getElementById('userEmail').value = userToEdit.email;
+                    document.getElementById('userRole').value = userToEdit.role;
+                    document.getElementById('userPassword').value = ''; // Clear password field for security
+                    document.getElementById('userPassword').required = false; // Password not required on edit unless changed
+                    userModal.style.display = 'flex';
+                }
+            }
+
+            function deleteUser(event) {
+                const userId = parseInt(event.target.dataset.id);
+                if (confirm('هل أنت متأكد أنك تريد حذف هذا المستخدم؟ لا يمكن التراجع عن هذا الإجراء.')) {
+                    users = users.filter(u => u.id !== userId);
+                    renderUsers();
+                }
+            }
+
+            // --- Settings Functions ---
+            function loadSettings() {
+                companyNameSetting.value = appSettings.companyName;
+                userNameSetting.value = appSettings.userName;
+                defaultEmailSetting.value = appSettings.defaultEmail;
+                dateFormatSetting.value = appSettings.dateFormat;
+                currencySymbolSetting.value = appSettings.currencySymbol;
+                
+                // Load custom colors
+                primaryDarkColorSetting.value = appSettings.primaryDarkColor;
+                accentRedColorSetting.value = appSettings.accentRedColor;
+                lightGreyColorSetting.value = appSettings.lightGreyColor;
+                mediumGreyColorSetting.value = appSettings.mediumGreyColor;
+                textDarkColorSetting.value = appSettings.textDarkColor;
+                textLightColorSetting.value = appSettings.textLightColor;
+
+                applyCustomColors(); // Apply colors immediately on load
+                
+                // Update the company name and user name in the sidebar/dashboard
+                document.querySelector('.sidebar .logo h2').textContent = appSettings.companyName;
+                dashboardUserNameDisplay.textContent = appSettings.userName;
+
+                // Load current admin credentials for display
+                currentEmailInput.value = adminCredentials.email;
+                currentPasswordInput.value = '';
+                newPasswordInput.value = '';
+                credentialsUpdateMessage.style.display = 'none';
+            }
+
+            settingsForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+                
+                appSettings.companyName = companyNameSetting.value;
+                appSettings.userName = userNameSetting.value;
+                appSettings.defaultEmail = defaultEmailSetting.value;
+                appSettings.dateFormat = dateFormatSetting.value;
+                appSettings.currencySymbol = currencySymbolSetting.value;
+
+                // Save custom colors
+                appSettings.primaryDarkColor = primaryDarkColorSetting.value;
+                appSettings.accentRedColor = accentRedColorSetting.value;
+                appSettings.lightGreyColor = lightGreyColorSetting.value;
+                appSettings.mediumGreyColor = mediumGreyColorSetting.value;
+                appSettings.textDarkColor = textDarkColorSetting.value;
+                appSettings.textLightColor = textLightColorSetting.value;
+
+                localStorage.setItem('appSettings', JSON.stringify(appSettings)); // Save to local storage
+
+                applyCustomColors(); // Apply new colors
+                alert('تم حفظ الإعدادات بنجاح!');
+                // Update company name and user name in sidebar/dashboard immediately
+                document.querySelector('.sidebar .logo h2').textContent = appSettings.companyName;
+                dashboardUserNameDisplay.textContent = appSettings.userName;
+                
+                // Re-initialize dashboard content to reflect currency symbol/color changes
+                initializeDashboardContent();
+                renderTransactions();
+                initializeFinancialReportsCharts();
+            });
+
+            // New: Reset colors to default
+            resetColorsBtn.addEventListener('click', function() {
+                if (confirm('هل أنت متأكد أنك تريد إعادة تعيين الألوان إلى الإعدادات الافتراضية؟')) {
+                    appSettings.primaryDarkColor = defaultColors.primaryDarkColor;
+                    appSettings.accentRedColor = defaultColors.accentRedColor;
+                    appSettings.whiteColor = defaultColors.whiteColor;
+                    appSettings.lightGreyColor = defaultColors.lightGreyColor;
+                    appSettings.mediumGreyColor = defaultColors.mediumGreyColor;
+تك                     appSettings.textDarkColor = defaultColors.textDarkColor;
+                    appSettings.textLightColor = defaultColors.textLightColor;
+
+                    localStorage.setItem('appSettings', JSON.stringify(appSettings)); // Save updated settings
+                    loadSettings(); // Reload settings to update form inputs and apply colors
+                    alert('تمت إعادة تعيين الألوان بنجاح!');
+                }
+            });
+
+            // New: Update Credentials Form Submission
+            updateCredentialsForm.addEventListener('submit', function(event) {
+                event.preventDefault();
+
+                const currentPass = currentPasswordInput.value;
+                const newPass = newPasswordInput.value;
+                const newEmail = newEmailInput.value;
+
+                credentialsUpdateMessage.style.display = 'block';
+                credentialsUpdateMessage.classList.remove('success', 'error');
+
+                if (currentPass === adminCredentials.password) {
+                    let updateSuccessful = false;
+                    let message = '';
+
+                    if (newEmail && newEmail !== adminCredentials.email) {
+                        // Basic email format validation
+                        if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newEmail)) {
+                            adminCredentials.email = newEmail;
+                            message += 'تم تحديث البريد الإلكتروني بنجاح. ';
+                            updateSuccessful = true;
+                        } else {
+                            message += 'صيغة البريد الإلكتروني الجديد غير صحيحة. ';
+                        }
+                    }
+
+                    if (newPass) {
+                        if (newPass.length >= 6) { // Basic validation for new password length
+                            adminCredentials.password = newPass;
+                            message += 'تم تحديث كلمة المرور بنجاح. ';
+                            updateSuccessful = true;
+                        } else {
+                            message += 'كلمة المرور الجديدة يجب أن تتكون من 6 أحرف على الأقل. ';
+                        }
+                    }
+
+                    if (updateSuccessful) {
+                        credentialsUpdateMessage.textContent = message.trim();
+                        credentialsUpdateMessage.classList.add('success');
+                        // Clear fields only if update was successful
+                        currentPasswordInput.value = '';
+                        newPasswordInput.value = '';
+                        newEmailInput.value = '';
+                        currentEmailInput.value = adminCredentials.email; // Update displayed email
+                    } else if (message === '') {
+                        credentialsUpdateMessage.textContent = 'لم يتم إجراء أي تغييرات. يرجى إدخال بريد إلكتروني جديد أو كلمة مرور جديدة.';
+                        credentialsUpdateMessage.classList.add('error');
+                    } else {
+                        credentialsUpdateMessage.textContent = message.trim();
+                        credentialsUpdateMessage.classList.add('error');
+                    }
+                } else {
+                    credentialsUpdateMessage.textContent = 'كلمة المرور الحالية غير صحيحة.';
+                    credentialsUpdateMessage.classList.add('error');
+                }
+            });
+
+
+            // Function to apply custom colors to CSS variables
+            function applyCustomColors() {
+                const root = document.documentElement; // Get the :root element
+
+                root.style.setProperty('--primary-dark', appSettings.primaryDarkColor);
+                root.style.setProperty('--accent-red', appSettings.accentRedColor);
+                root.style.setProperty('--white', appSettings.whiteColor);
+                root.style.setProperty('--light-grey', appSettings.lightGreyColor);
+                root.style.setProperty('--medium-grey', appSettings.mediumGreyColor);
+                root.style.setProperty('--text-dark', appSettings.textDarkColor);
+                root.style.setProperty('--text-light', appSettings.textLightColor);
+            }
+
+            // Helper to convert hex to rgba for chart background colors
+            function hexToRgba(hex, alpha) {
+                let r = 0, g = 0, b = 0;
+                // Handle 3-digit hex
+                if (hex.length === 4) {
+                    r = parseInt(hex[1] + hex[1], 16);
+                    g = parseInt(hex[2] + hex[2], 16);
+                    b = parseInt(hex[3] + hex[3], 16);
+                }
+                // Handle 6-digit hex
+                else if (hex.length === 7) {
+                    r = parseInt(hex.substring(1, 3), 16);
+                    g = parseInt(hex.substring(3, 5), 16);
+                    b = parseInt(hex.substring(5, 7), 16);
+                }
+                return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+            }
+
+
+            // Initial load of settings and apply colors when the page is first loaded (before login)
+            loadSettings();
+
+        });
+    </script>
+</body>
+</html>
+
+
